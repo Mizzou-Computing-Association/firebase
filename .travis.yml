@@ -5,4 +5,4 @@ script: 'true'
 install:
   - npm install -g firebase-tools
 after_success:
-  - firbease deploy --project tigerhacks --token $FIREBASE_TOKEN
+  - firebase deploy --project tigerhacks --token $FIREBASE_TOKEN

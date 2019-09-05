@@ -33,7 +33,6 @@ body
         appId: "1:177120544304:web:d1aa2fe0625e567a"
       };
       firebase.initializeApp(firebaseConfig);
-      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
       $('#github').on('click', () => {
         firebase.auth().signInWithPopup(new firebase.auth.GithubAuthProvider()).then((result) => {
           signIn(result.user);

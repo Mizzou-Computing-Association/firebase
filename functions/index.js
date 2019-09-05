@@ -186,6 +186,8 @@ app.get('/signin', (req, res) => {
 			} else {
 				return res.redirect('/register');
 			}
+		}).catch((error) => {
+			return res.redirect('/register');
 		});
 	} else {
 		res.send(pug.renderFile('./views/signin.pug'));

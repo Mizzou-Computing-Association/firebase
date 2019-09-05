@@ -1,0 +1,81 @@
+extends layout
+
+block content
+  .container
+    h1 Register for TigerHacks
+    form(action='/register' enctype='multipart/form-data' method='POST')
+      .row
+        .col.s12
+          .row
+            .input-field.col.s12
+              input.validate(name='name' placeholder='' type='text' id='name' required value= user.name ? user.name : '')
+              label(for='first_name') Full name
+              span.helper-text(data-error='This field is required' data-success='')
+          .row
+            .input-field.col.s12
+              input.validate(name='email' placeholder='' type='email' id='email' required pattern='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.[a-zA-Z]$' value= user.email ? user.email : '')
+              label(for='email') Email
+              span.helper-text(data-error='Please enter a valid email' data-success='')
+          .row
+            .input-field.col.s12.m6
+              input.validate(name='major' placeholder='' type='text' id='major' required)
+              label(for='major') Major
+              span.helper-text(data-error='This field is required' data-success='')
+            .input-field.col.s12.m6
+              select(name='graduation_year' required)
+                option(value='' disabled selected) Graduation year
+                option(value='2018') 2018
+                option(value='2019') 2019
+                option(value='2020') 2020
+                option(value='2021') 2021
+                option(value='2022') 2022
+                option(value='2023') 2023
+                option(value='2024') 2024
+              label Graduation year
+          .row
+            .input-field.col.s12.m6
+              input(name='dietary_restrictions' placeholder='' type='text' id='food_restrictions')
+              label(for='food_restrictions') Food restrictions
+            .input-field.col.s12.m6
+              select(name='shirt_size' required)
+                option(value='' disabled selected) Shirt size
+                option(value='XS') XS
+                option(value='S') S
+                option(value='M') M
+                option(value='L') L
+                option(value='XL') XL
+                option(value='XXL') XXL
+              label Shirt size
+          .row
+            .file-field.input-field.col.s12.m6
+              .btn.btn-large
+                span Upload resume
+                input(name='resume' type='file' accept='.pdf' required)
+              .file-path-wrapper
+                input.file-path.validate(type='text')
+            .input-field.col.s12.m6
+              p
+                label
+                  input(name='reimbursement' type='checkbox')
+                  span Will you need travel reimbursement?
+          .row
+            .input-field.col.s12.m6
+              p
+                label
+                  input(name='mlh_terms' type='checkbox' required)
+                  span I have read and agree to the #[a(href='https://static.mlh.io/docs/mlh-code-of-conduct.pdf') MLH Code of Conduct]
+                    |, the #[a(href='https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md') MLH Contest Terms and Conditions]
+                    |, and the #[a(href='https://mlh.io/privacy') MLH Privacy Policy]
+            .input-field.col.s12.m6
+              p
+                label
+                  input(name='th_terms' type='checkbox' required)
+                  span I authorize you to share my application/registration information for event administration, ranking, MLH administration, 
+                    |pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the MLH Privacy Policy.
+          .row
+            .col.s12
+              button.btn.btn-large(type='submit') Submit
+  script.
+    $(document).ready(() => {
+      $('select').formSelect();
+    });

@@ -1,0 +1,269 @@
+extends layout
+
+block content
+  .fill
+    .content.z-depth-5
+      img.logo(src='/tiger_big.png')
+      h2(style='color: #F89939;') tiger
+      h2 hacks
+      h5= info.tigerhacks.dates
+      if info.tigerhacks.register
+        a.btn-large(href=info.tigerhacks.register.link)= info.tigerhacks.register.title
+      else
+        h5 More information coming soon!
+      br
+      .row
+        a(href='mailto:muengrtigerhacks@missouri.edu' target='_blank')
+          i.fa.fa-2x.fa-envelope-square(aria-hidden='true')
+        a(href='https://twitter.com/tigerhackshd' target='_blank')
+          i.fa.fa-2x.fa-twitter-square(aria-hidden='true')
+        a(href='http://facebook.com/tigerhacks' target='_blank')
+          i.fa.fa-2x.fa-facebook-square(aria-hidden='true')
+        a(href='https://instagram.com/tigerhacks' target='_blank')
+          i.fa.fa-2x.fa-instagram(aria-hidden='true')
+  div(id='aboutsec hide-mobile')
+    #about.header(data-target='#aboutinfo')
+      h2 About
+    #aboutinfo.container.row
+      .col.s12.m4
+        h5.center.info-header What is TigerHacks?
+        p= info.tigerhacks.about
+      .col.s12.m4
+        h5.center.info-header What is a hackathon?
+        p= info.tigerhacks.hackathon
+      .col.s12.m4
+        h5.center.info-header Theme
+        p= info.tigerhacks.theme
+    .container
+      hr
+  #prizessec.hide-mobile
+    #prizes.header(data-target='#prizesinfo')
+      h2 Prizes
+    #prizesinfo.container
+      if prizes
+        table
+          thead
+            tr
+              th Category
+              th.right Prize
+          tbody
+            each prize in prizes
+              tr
+                td= prize.title
+                td.right= prize.reward
+      else
+        h4 Prizes coming soon
+      hr
+  #schedulesec.hide-mobile
+    #schedule.header(data-target='#scheduleinfo')
+      h2 schedule
+    #scheduleinfo.row.container
+      each date in Object.keys(schedule)
+        div(class='col s12 m' + (12/Object.keys(schedule).length))
+          h5= date
+          each event in schedule[date]
+            .row
+              .col.s12
+                .card.schedule
+                  .card-content
+                    p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'})
+                    span.card-title= event.title
+                    if event.location && event.location != ''
+                      p= '@ ' + event.location
+                  .card-reveal
+                    p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'})
+                    span.card-title= event.title
+                    if event.location && event.location != ''
+                      p= event.location
+                    p= event.description
+    .container
+      hr
+  #sponsorssec.hide-mobile
+    #sponsors.header(data-target='#sponsorinfo')
+      h2 Sponsors
+    #sponsorinfo.container
+      .row
+        if sponsors
+          each level in Object.keys(sponsors)
+            .col.s12
+              h4.sponsor-header= level
+              .row
+                each sponsor in sponsors[level]
+                  div(class='col s' + Math.max(3, 12/sponsors[level].length))
+                    .card
+                      .card-image.waves-effect.waves-block.waves-light
+                        a(href=sponsor.website target='_blank')
+                          img(src=sponsor.image)
+                      .card-content
+                        p= sponsor.description
+        else
+          h3 Our sponsors aren&apos;t finalized for 2019, check back soon!
+      center
+        a.waves-effect.waves-light.btn-large(href='mailto:tigerhackshd@gmail.com' target='_blank') Sponsor us!
+      hr
+  #tigertalkssec.hide-mobile
+    #tigertalks.header(data-target='#tigertalksinfo')
+      h2 TigerTalks
+    #tigertalksinfo.container.row
+      .col.s12
+        .row
+          .col.s12.m4
+            h5.center.info-header About TigerTalks
+            p= info.tigertalks.about
+          .col.s12.m4
+            h5.center.info-header Food and Prizes
+            p= info.tigertalks.prizes
+          .col.s12.m4
+            h5.center.info-header Date and Location
+            p= info.tigertalks.location
+        center
+          if info.tigertalks.register
+            a.btn-large(href=info.tigertalks.register.link target='_blank')= info.tigertalks.reigster.title
+          else
+            h5 More information coming soon!
+      hr
+    // #faq.header(data-target='#faqinfo')
+    //   h2 FAQ
+    // #faqinfo.row.container
+    //   .col.s12
+    //     ul.tabs
+    //       li.tab.col.s4
+    //         a.tablink.active(href='#general') General
+    //       li.tab.col.s4
+    //         a.tablink(href='#hacking') Hacking
+    //       li.tab.col.s4
+    //         a.tablink(href='#logistics') Logistics
+    //   #general.container.col.s12
+    //     h5 Where and When is TigerHacks?
+    //     p
+    //       | TigerHacks will run from 5:00 p.m November 8th to 3:00 p.m. November 10th in the newly renovated Lafferre Hall
+    //       | at the University of Missouri - Columbia.
+    //     br
+    //     h5 Is coding experience required?
+    //     p
+    //       | Of course not! All students who want to learn about technology, design, and building new things are welcome.
+    //       | Because media tech is interdisciplinary, the best teams will draw from a broad range of experiences and foster
+    //       | learning and collaboration among different domains. Come ready to learn something new, and we will take care
+    //       | of the rest.
+    //     br
+    //     h5 Am I eligible to participate?
+    //     p
+    //       | Current undergraduate and graduate students, or those who graduated within the last 6 months, can compete.
+    //       | High school students who are 18 years of age or older are also eligible. Anyone is welcome to come and see
+    //       | what participants are working on - feel free to swing by.!
+    //     br
+    //     h5 Is there a deadline to register?
+    //     p
+    //       | Registration will be open until the day before the event. Unfortunately, we will not be able to accommodate
+    //       | new registrants the day of the event.
+    //     br
+    //     h5 How should I act?
+    //     p
+    //       | Good question! Check out the 
+    //       a(href='https://static.mlh.io/docs/mlh-code-of-conduct.pdf' target='_')
+    //         | MLH Code
+    //         | of Conduct
+    //       | . Although we&apos;re all here to have fun, we do not want to create an unpleasant environment for
+    //       |   any hacker.
+    //     br
+    //     h5 I have another question!
+    //     p
+    //       | Not a problem, shoot us an email at 
+    //       a.email(href='mailto:muengrtigerhacks@missouri.edu' target='_blank') muengrtigerhacks@missouri.edu
+    //       |  and we will get back with you ASAP.
+    //   #hacking.col.s12.container
+    //     h5 First time at a hackathon?
+    //     p
+    //       | Not a problem! Your experience is entirely irrelevant is going into a hackathon, it&apos;s more about your
+    //       | interest in technology. We are passionate about making the hackathon welcoming and beginner-friendly. If you
+    //       | want to learn how to code before TigerHacks, here&apos;s a 
+    //       a(href='https://medium.com/on-coding/you-can-already-code-you-just-dont-know-it-yet-862044601a5a' target='_') fantastic blog post that you should read.
+    //       |  After, you can check out the following: 
+    //       a(href='https://teamtreehouse.com/' target='_') Treehouse
+    //       | , 
+    //       a(href='https://www.codecademy.com/' target='_') Codecademy
+    //       | , and the 
+    //       a(href='http://news.mlh.io/posts' target='_')
+    //         | Major League Hacking
+    //         | Blog
+    //       |  to get started.
+    //     br
+    //     h5 How do teams work?
+    //     p
+    //       | If you don&apos;t have a team, we&apos;ve got you covered. We will have a dedicated team building time on Friday!
+    //       | Otherwise, add team information on the hacker dashboard when you apply (can be changed). Once the idea
+    //       | brainstorming session is done, there will be an open mic and networking time to find a team. Everyone
+    //       | registered will also be invited to the TigerHacks Slack team prior to the hackathon in order to network and
+    //       | discuss ideas. Feel free to team up with friends, or branch out and meet someone new during the weekend.
+    //     br
+    //     h5 What should I build?
+    //     p
+    //       | You can build whatever you want: websites, programs, mobile apps, anything! However, all code must be written
+    //       | during the hackathon - feel free to use open source libraries and APIs.
+    //     br
+    //     h5 How many people can be on a team?
+    //     p
+    //       | We recommend teams of 3-4 poeple, though if you prefer to fly solo or work in a pair we won&apos;t stop you. Teams
+    //       | submitting their project will be limited to 6 hackers per team.
+    //     br
+    //     h5 Who will own my brain child?
+    //     p
+    //       | All of the work done by you and your team will be completely yours. We hope that you will continue to work on
+    //       | the project and share your work with others!
+    //     br
+    //   #logistics.container.col.s12
+    //     h5 What do I need to participate?
+    //     p
+    //       | First, the basics: bring your laptop and charger. Bring your cell phone and charger too, and a power splitter
+    //       | if you have one! A water bottle, pillow, and any other accessories you would bring to a sleepover is a plus.
+    //       | The most important thing to bring is curiosity and the willingness to contribute ideas. Please don&apos;t bring
+    //       | alcohol, drugs, or soldering equipment.
+    //     br
+    //     h5 How can I get to TigerHacks?
+    //     p
+    //       | You can drive, take a bus, or even walk if you&apos;re that dedicated. We&apos;ll offer travel reimbursement up to $25
+    //       | (with valid recipts) if you travel on your own dime. Parking is available in Turner Avenue Garage.
+    //     br
+    //     h5 Should I pack a lunch?
+    //     p
+    //       | That won&apos;t be necessary - we&apos;ll be providing multiple meals and snacks throughout the entire event. We should
+    //       | even be able to accommodate most dietary restrictions.
+    //     p
+    //     br
+    //     h5 What can I win?
+    //     p
+    //       | It wouldn&apos;t be a hackathon without awesome prizes!
+    //       | Teams will be judged based on projects&apos; creativity, usefulness, technical difficulty, and innovative
+    //       | improvement to media.
+    //       | Past prizes have included: Personal Drones and Surfaces sponsored by Microsoft, GoPro Cameras sponsored by
+    //       | Carfax, and Cash Prizes.
+    //       | There will also be a special award for the best project made by first-time hackathon particpants.
+    //     br
+    //     h5 Where can I sleep?
+    //     p
+    //       | Programming can be exhausting, but we have you covered. We will provide a quiet rest room where hackers
+    //       | can take a break from the action.
+    //     br
+    //     h5
+    //       | Does TigerHacks cost money?
+    //     p
+    //       | Not for you! Thanks to our fantastic sponsors, the cost of the event (food &amp; prizes included) is
+    //       | completely free for participants.
+
+  footer.page-footer
+    if info.apps.enabled
+      .container.row
+        .col.s12(style='text-align: center;')
+          a(href=info.apps.app_store_link target='_blank')
+            img(src='/appstore.png' alt='Download on the App Store' height='50px')
+          a(href=info.apps.google_play_link target='_blank')
+            img(src='/googleplay.png' alt='Download on Google Play' height='50px')
+    .container
+      p &copy; 2019 TigerHacks
+
+  a#mlh-trust-badge(style='display:block;max-width:100px;min-width:60px;position:fixed;right:50px;top:0;width:10%;z-index:10000' href='https://mlh.io/seasons/na-2020/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2020-season&utm_content=gray' target='_blank')
+    img(src='https://s3.amazonaws.com/logged-assets/trust-badge/2020/mlh-trust-badge-2020-gray.svg' alt='Major League Hacking 2020 Hackathon Season' style='width:100%')
+  script.
+    $(document).ready(() => {
+      $('.tabs').tabs();
+    });

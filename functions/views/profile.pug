@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  .container
+    .row
+      .col.s12
+        h4= user.name
+        if user.id
+          .row
+            .col.s12.m4
+              img.tigerpass(src=user.id alt='TigerID')
+              p.center TigerID
+        if user.graduation_year
+          .row
+            .col.s12
+              p= 'Graduates in ' + user.graduation_year
+        if user.email
+          .row
+            .col.s12
+              p Email: #[a(href='mailto:'+user.email)= user.email]
+        if user.major
+          .row
+            .col.s12
+              p= 'Major: ' + user.major
+        if user.resume
+          .row
+            .col.s12
+              p Resume: #[a(href=user.resume target='_blank') Download]

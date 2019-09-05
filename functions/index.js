@@ -178,7 +178,7 @@ app.post('/register', authenticate, (req, res) => {
 	busboy.end(req.rawBody);
 });
 
-app.get('/signin', (req, res) => {
+app.get('/signin', authenticate, (req, res) => {
 	if (req.user) {
 		db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {
 			if (userDoc.exists) {

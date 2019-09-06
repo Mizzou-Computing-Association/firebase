@@ -49,7 +49,7 @@ function authenticate(req, res, next) {
 }
 
 app.get('/', (req, res) => {
-	db.collection('prizes').get().then((prizesSnapshot) => {
+	db.collection('prizes').orderBy('order').get().then((prizesSnapshot) => {
 		var data = {
 			title: 'TigerHacks'
 		};

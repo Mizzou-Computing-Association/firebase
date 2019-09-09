@@ -263,7 +263,9 @@ app.get('/api/schedule', (req, res) => {
 });
 
 app.get('/api/checkin', (req, res) => {
+	console.log(req.query);
 	db.collection('participants').doc(req.query.userid).get().then((userDoc) => {
+		console.log(userDoc);
 		if (!userDoc.exists) {
 			return res.status(404).json({
 				error: 'User does not exist, please register!'

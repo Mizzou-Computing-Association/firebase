@@ -103,7 +103,7 @@ app.get('/profile', authenticate, (req, res) => {
 		if (!userDoc.exists) {
 			return res.redirect('/register');
 		}
-		QRCode.toDataURL(`https://tigerhacks.firebaseapp.com/profile/${req.user.user_id}`, qrOptions , (err, qrData) => {
+		QRCode.toDataURL(`https://tigerhacks.com/profile/${req.user.user_id}`, qrOptions , (err, qrData) => {
 			const userInfo = {
 				id: qrData,
 				name: userDoc.get('name')
@@ -243,14 +243,14 @@ app.get('/api/prizes', (req, res) => {
 });
 
 app.get('/api/schedule', (req, res) => {
-	db.collection('schedule').get().then((snapshot) => {
+	db.collection('schedule').orderBy('time').get().then((snapshot) => {
 		var schedule = [];
 		snapshot.docs.forEach((scheduleDoc) => {
 			if (req.query.requiresCheckin && !scheduleDoc.get('canCheckIn')) {
 				return;
 			}
 			schedule.push({
-				time: scheduleDoc.get('time'),
+				time: scheduleDoc.get('time').toMillis(),
 				location: scheduleDoc.get('location'),
 				floor: scheduleDoc.get('floor'),
 				title: scheduleDoc.get('title'),
@@ -258,12 +258,17 @@ app.get('/api/schedule', (req, res) => {
 				imageLocation: scheduleDoc.get('imageLocation')
 			});
 		});
-		res.json({ schedule: schedule });
+		res.json(schedule);
 	});
 });
 
 app.get('/api/checkin', (req, res) => {
-	db.collection('users').doc(req.query.userid).get().then((userDoc) => {
+	db.collection('participants').doc(req.query.userid).get().then((userDoc) => {
+		if (!userDoc.exists) {
+			return res.status(404).json({
+				error: 'User does not exist, please register!'
+			});
+		}
 		let userData = userDoc.data();
 		userData.alreadyin = userData.checkins.contains(req.query.event);
 		userDoc.ref.set({

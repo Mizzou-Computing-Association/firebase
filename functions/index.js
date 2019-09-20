@@ -170,6 +170,7 @@ app.post('/register', authenticate, (req, res) => {
 			fields.mlh_terms = fields.mlh_terms == 'on';
 			fields.th_terms = fields.th_terms == 'on';
 			fields.reimbursement = fields.reimbursement == 'on';
+			fields.checkins = [];
 			db.collection('participants').doc(req.user.user_id).set(fields);
 			res.redirect('/profile');
 		});
@@ -255,7 +256,8 @@ app.get('/api/schedule', (req, res) => {
 				floor: scheduleDoc.get('floor'),
 				title: scheduleDoc.get('title'),
 				description: scheduleDoc.get('description'),
-				imageLocation: scheduleDoc.get('imageLocation')
+				imageLocation: scheduleDoc.get('imageLocation'),
+				id: scheduleDoc.id,
 			});
 		});
 		res.json(schedule);
@@ -265,14 +267,13 @@ app.get('/api/schedule', (req, res) => {
 app.get('/api/checkin', (req, res) => {
 	console.log(req.query);
 	db.collection('participants').doc(req.query.userid).get().then((userDoc) => {
-		console.log(userDoc);
 		if (!userDoc.exists) {
 			return res.status(404).json({
 				error: 'User does not exist, please register!'
 			});
 		}
 		let userData = userDoc.data();
-		userData.alreadyin = userData.checkins.contains(req.query.event);
+		userData.alreadyin = userData.checkins.includes(req.query.event);
 		userDoc.ref.set({
 			checkins: admin.firestore.FieldValue.arrayUnion(req.query.event)
 		}, { merge: true });

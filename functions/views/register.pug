@@ -12,10 +12,14 @@ block content
               label(for='first_name') Full name
               span.helper-text(data-error='This field is required' data-success='')
           .row
-            .input-field.col.s12
-              input.validate(name='email' placeholder='' type='email' id='email' required pattern='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.[a-zA-Z]$' value= user.email ? user.email : '')
+            .input-field.col.s12.m6
+              input.validate(name='email' placeholder='' type='email' id='email' required pattern='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.[a-zA-Z]+$' value= user.email ? user.email : '')
               label(for='email') Email
               span.helper-text(data-error='Please enter a valid email' data-success='')
+            .input-field.col.s12.m6
+              input.validate.autocomplete(name='school' placeholder='' type='text' id='school' required)
+              label(for='school') School
+              span.helper-text(data-error='Please enter your school or university' data-success='')
           .row
             .input-field.col.s12.m6
               input.validate(name='major' placeholder='' type='text' id='major' required)
@@ -78,4 +82,13 @@ block content
   script.
     $(document).ready(() => {
       $('select').formSelect();
+      $.getJSON('https://tigerhacks.com/schools.json', (schools) => {
+        var schoolData = {};
+        $.each(schools, (key, val) => {
+          schoolData[val] = null;
+        });
+        $('#school').autocomplete({
+          data: schoolData
+        });
+      });
     });

@@ -7,24 +7,24 @@ block content
       .row
         .col.s12
           .row
-            .input-field.col.s12
+            .input-field.col.s12.m6
               input.validate(name='name' placeholder='' type='text' id='name' required value= user.name ? user.name : '')
               label(for='first_name') Full name
               span.helper-text(data-error='This field is required' data-success='')
-          .row
             .input-field.col.s12.m6
               input.validate(name='email' placeholder='' type='email' id='email' required pattern='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.[a-zA-Z]+$' value= user.email ? user.email : '')
               label(for='email') Email
               span.helper-text(data-error='Please enter a valid email' data-success='')
+          .row
             .input-field.col.s12.m6
               input.validate.autocomplete(name='school' placeholder='' type='text' id='school' required)
               label(for='school') School
               span.helper-text(data-error='Please enter your school or university' data-success='')
-          .row
             .input-field.col.s12.m6
               input.validate(name='major' placeholder='' type='text' id='major' required)
               label(for='major') Major
               span.helper-text(data-error='This field is required' data-success='')
+          .row
             .input-field.col.s12.m6
               select(name='graduation_year' required)
                 option(value='' disabled selected) Graduation year
@@ -36,10 +36,6 @@ block content
                 option(value='2023') 2023
                 option(value='2024') 2024
               label Graduation year
-          .row
-            .input-field.col.s12.m6
-              input(name='dietary_restrictions' placeholder='' type='text' id='food_restrictions')
-              label(for='food_restrictions') Food restrictions
             .input-field.col.s12.m6
               select(name='shirt_size' required)
                 option(value='' disabled selected) Shirt size
@@ -50,6 +46,21 @@ block content
                 option(value='XL') XL
                 option(value='XXL') XXL
               label Shirt size
+          .row
+            .input-field.col.s12.m6
+              select(name='dietary_restrictions' required multiple)
+                option(value='' disabled selected) Dietary Restrictions
+                option(value='Vegetarian') Vegetarian
+                option(value='Kosher') Kosher
+                option(value='Halal') Halal
+                option(value='Vegan') Vegan
+                option(value='Gluten Free') Gluten Free
+                option(value='Allergy') Allergy (please specify in notes)
+                option(value='Other') Other (please specify in notes)
+              label Dietary restrictions
+            .input-field.col.s12.m6
+              input(name='notes' id='notes')
+              label(for='notes') Notes
           .row
             .file-field.input-field.col.s12.m6
               .btn.btn-large

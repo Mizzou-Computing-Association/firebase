@@ -10,7 +10,8 @@
         November 8-10 2019
     </v-card-title>
 
-    <v-btn :large="true" color="#f79845" class="mt-6" height="60" @click="window.location.replace('https://tigerhacks.firebaseapp.com/signin')">Register</v-btn>
+    <v-btn :large="true" color="#f79845" class="mt-6" height="60" @click="window.location.replace('https://tigerhacks.firebaseapp.com/signin')" block>Register</v-btn>
+    <v-btn :large="true" color="#f79845" class="mt-6" height="60" @click="$emit('openDashboard')" block>Learn More</v-btn>
 
     <v-card-actions class="justify-center link-row mt-3">
       <v-btn @click="window.location.replace('mailto:muengrtigerhacks@missouri.edu')">
@@ -40,7 +41,7 @@ export default {
 
 .landing-card {
   margin: auto;
-  margin-top: 40px;
+  margin-top: 3vh;
   width: 80vw;
   max-width: 460px;
   padding: 30px;
@@ -48,6 +49,9 @@ export default {
   position: relative;
   bottom: 0;
   transition: bottom 1s ease, max-width 1s ease, width 1s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .landing-card:hover {

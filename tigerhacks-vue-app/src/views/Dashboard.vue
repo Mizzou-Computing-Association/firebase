@@ -9,16 +9,16 @@
     </transition>
 
     <transition name="fade">
-      <landing-card v-if="!isDashboardOpen"></landing-card>
+      <landing-card v-if="!isDashboardOpen" @openDashboard="openDashboard()"></landing-card>
     </transition>
 
     <transition name="from-right">
       <bottom-navbar v-if="isDashboardOpen" @switchTheme="switchTheme()" class="bottom-nav"></bottom-navbar>
     </transition>
 
-    <v-btn @click="openDashboard()" class="palette-button" v-if="!isDashboardOpen">
+    <!-- <v-btn @click="openDashboard()" class="palette-button" v-if="!isDashboardOpen">
       <v-icon>mdi-help</v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <transition name="from-bottom">
       <!-- <v-parallax
@@ -94,8 +94,9 @@ export default {
 .dashboard-div {
   width: 100vw;
   height: 100vh;
-  background: url("../assets/background-img.jpg");
+  background-image: url("../assets/background-img.jpg");
   background-repeat: repeat;
+  background-size: 100%;
 }
 
 .mlh-badge {
@@ -121,7 +122,7 @@ export default {
 
 .fade-enter,
 .fade-leave-to {
-  opacity: 0;
+  opacity: 0 !important;
 }
 
 .fade-enter-to,

@@ -118,6 +118,9 @@ app.get('/profile/:user', (req, res) => {
 });
 
 app.post('/register', authenticate, (req, res) => {
+	if (!req.user) {
+		return res.redirect('/');
+	}
 	const busboy = new Busboy({ headers: req.headers });
 
 	const fields = {
@@ -138,6 +141,10 @@ app.post('/register', authenticate, (req, res) => {
 	var fileName = ''
 
 	busboy.on('file', (field, file, filename) => {
+		if (!filename || filename == '') {
+			console.log('No resume submitted, skipping that step');
+			return file.resume();
+		}
 		console.log(`Processing file ${filename}`);
 		if (field != 'resume') {
 			return file.resume();
@@ -160,15 +167,24 @@ app.post('/register', authenticate, (req, res) => {
 	});
 
 	busboy.on('finish', () => {
-		promise.then(() => {
-			fields.resume = `https://storage.cloud.google.com/tigerhacks.appspot.com/${fileName}`;
-			fields.mlh_terms = fields.mlh_terms == 'on';
-			fields.th_terms = fields.th_terms == 'on';
+		if (promise != null) {
+			promise.then(() => {
+				fields.resume = `https://storage.cloud.google.com/tigerhacks.appspot.com/${fileName}`;
+				fields.mlh_terms = fields.mlh_terms ? fields.mlh_terms == 'on' : true;
+				fields.th_terms = fields.th_terms ? fields.th_terms == 'on' : true;
+				fields.reimbursement = fields.reimbursement == 'on';
+				fields.checkins = [];
+				db.collection('participants').doc(req.user.user_id).set(fields, {merge: true});
+				res.redirect('/');
+			});
+		} else {
+			fields.mlh_terms = fields.mlh_terms ? fields.mlh_terms == 'on' : true;
+			fields.th_terms = fields.th_terms ? fields.th_terms == 'on' : true;
 			fields.reimbursement = fields.reimbursement == 'on';
 			fields.checkins = [];
 			db.collection('participants').doc(req.user.user_id).set(fields, {merge: true});
 			res.redirect('/');
-		});
+		}
 	});
 
 	busboy.end(req.rawBody);

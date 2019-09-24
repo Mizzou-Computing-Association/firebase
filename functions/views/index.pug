@@ -8,6 +8,7 @@ html
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')
     script(src='https://use.fontawesome.com/2dcf4e58a9.js')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
     link(rel='stylesheet', href='/style.css')
     link(rel='stylesheet', href='https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css')
     script(src='https://www.gstatic.com/firebasejs/6.5.0/firebase-app.js')
@@ -32,7 +33,7 @@ html
         a(href='https://instagram.com/tigerhacks', target='_blank')
           i.fa.fa-3x.fa-instagram(aria-hidden='true')
     #content
-      i#close.fa.fa-2x.fa-times(aria-hidden='true')
+      i#close.material-icons close
       .content
         #tab-register.container
           .row
@@ -99,13 +100,13 @@ html
                             option(value='Other' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Other')) Other (please specify in notes)
                           label Dietary restrictions
                         .input-field.col.s12.m6
-                          input(name='notes' type='text' id='notes')
+                          input(name='notes' type='text' id='notes' value= user.info.notes ? user.info.notes : '')
                           label(for='notes') Notes
                       .row
                         .file-field.input-field.col.s12.m6
                           .btn.btn-large
                             span Upload resume
-                            input(name='resume' type='file' accept='.pdf' required=user.info.resume)
+                            input(name='resume' type='file' accept='.pdf' required=!user.registered)
                           .file-path-wrapper
                             input.file-path.validate(type='text')
                         .input-field.col.s12.m6
@@ -132,7 +133,7 @@ html
                         .col.s12
                           button.btn.btn-large.right(type='submit')= user.registered ? 'Update Info' : 'Register'
             else
-              h2 Sign in to TigerHacks
+              h2 Sign in to register
               #auth-ui-container
         #tab-about.container
           h2 About TigerHacks
@@ -189,10 +190,13 @@ html
                       div(class='col s12 m' + Math.max(3, 12/sponsors[level].length))
                         .card
                           .card-image.waves-effect.waves-block.waves-light
-                            a(href=sponsor.website target='_blank')
-                              img(src=sponsor.image)
-                          .card-content
+                            img.activator(src=sponsor.image)
+                          .card-reveal
+                            span.card-title=sponsor.name
+                              i.material-icons.right close
                             p= sponsor.description
+                            a(href=sponsor.website) Visit
+
             else
               h3 Our sponsors aren&apos;t finalized for 2019, check back soon!
             center
@@ -200,24 +204,26 @@ html
       ul.tabs
         li.tab.col.s2
           a.tablink.active(href='#tab-register')
-            i.fa.fa-user(aria-hidden='true')
+            i.material-icons.tab-icon person
             span.tab-title= user ? 'Profile' : 'Register'
         li.tab.col.s2
           a.tablink(href='#tab-about')
-            i.fa.fa-question(aria-hidden='true')
+            i.material-icons.tab-icon info
             span.tab-title About
         li.tab.col.s2
           a.tablink(href='#tab-prizes')
-            i.fa.fa-trophy(aria-hidden='true')
+            i.material-icons.tab-icon redeem
             span.tab-title Prizes
         li.tab.col.s3
           a.tablink(href='#tab-schedule')
-            i.fa.fa-calendar(aria-hidden='true')
+            i.material-icons.tab-icon event
             span.tab-title Schedule
         li.tab.col.s3
           a.tablink(href='#tab-sponsors')
-            i.fa.fa-star(aria-hidden='true')
+            i.material-icons.tab-icon star
             span.tab-title Sponsors
+    a#mlh-trust-badge(style='display:block;max-width:100px;min-width:60px;position:fixed;right:50px;top:0;width:10%;z-index:2' href='https://mlh.io/seasons/na-2020/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2020-season&utm_content=gray' target='_blank')
+      img(src='https://s3.amazonaws.com/logged-assets/trust-badge/2020/mlh-trust-badge-2020-gray.svg' alt='Major League Hacking 2020 Hackathon Season' style='width:100%')
     script(type='text/javascript').
       $(document).ready(() => {
         if (window.localStorage.getItem('open')) {

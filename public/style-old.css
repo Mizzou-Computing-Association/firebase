@@ -1,0 +1,183 @@
+@media (prefers-color-scheme: light) {
+  :root {
+    --text-color: #333132;
+    --background-color: #FEF8E2;
+    --link-color: #F89939;
+    --content-color: #333132;
+  }
+}
+
+:root {
+  color-scheme: light dark;
+  --text-color: #FEF8E2;
+  --background-color: #333132;
+  --link-color: #F89939;
+  --content-color: #FEF8E2;
+}
+
+body {
+	font-family: Outage;
+	font-size: 18px;
+	color: var(--text-color);
+	background-color: var(--background-color);
+  padding: 0;
+}
+
+form {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+a {
+  color: var(--link-color)!important;
+}
+
+.sponsor-logo {
+  margin: auto;
+  max-width: 100%;
+}
+
+.sponsor-header {
+  text-align: center;
+}
+
+.tab {
+  color: var(--link-color);
+  background-color: var(--background-color);
+}
+
+.indicator {
+  background-color: var(--link-color)!important;
+}
+
+.fill {
+	background-color: var(--background-color);
+	background: url("/columns.jpg") center;
+	background-size: cover;
+	position: relative;
+	width: 100%;
+	height: 100vh;
+}
+
+.content {
+	background-color: var(--background-color);
+	color: var(--text-color);
+	padding-left: 25px;
+	padding-right: 25px;
+	padding-bottom: 15x  px;
+	text-align: center;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	top: 50%;
+	position: absolute;
+	min-width: 28.5rem;
+	border-radius: 4px;
+}
+
+.logo {
+	width: 100%;
+	max-width: 300px;
+	display: block;
+	margin: auto;
+}
+
+.fa {
+	color: var(--text-color);
+  padding: 4px!important;
+  margin-top: 10px;
+}
+
+@font-face {
+	font-family: "Outage";
+	src: url("Outage.ttf") format("truetype"), url("Outage.eot");
+}
+
+label {
+	padding-top: 10px;
+}
+
+h2 {
+	font-size: 3.33rem;
+	display: inline;
+}
+
+.card {
+  background-color: rgba(0,0,0,0.3);
+  text-align: left;
+}
+
+.card-image {
+  padding: 10px;
+}
+
+.btn-large {
+  color: var(--background-color)!important;
+	background-color: var(--text-color)!important;
+  font-family: Outage;
+}
+
+.header {
+	text-align: center;
+  margin-top: 15px;
+}
+
+hr {
+  background-color: var(--text-color);
+}
+
+p {
+	font-size: 18;
+	font-family: 'Source Sans Pro', sans-serif;
+	margin: 0px;
+}
+
+table {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+footer {
+	background-color: var(--background-color) !important;
+	color: var(--text-color) !important;
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.date {
+  background-color: var(--link-color);
+}
+
+.schedule {
+  border-left: 4px solid var(--link-color);
+}
+
+#error {
+  background-color: rgba(236, 13, 13, 0.58);
+  border-radius: 5px;
+  text-align: center;
+  display: inline-block;
+  margin: 15px;
+  padding: 5px;
+}
+
+#message {
+  background-color: rgba(50, 168, 82, 0.58);
+  border-radius: 5px;
+  text-align: center;
+  display: inline-block;
+  margin: 15px;
+  padding: 5px;
+}
+
+input {
+  color: var(--text-color);
+}
+
+.tigerpass {
+  width: 100%;
+}
+
+.center {
+  text-align: center;
+}

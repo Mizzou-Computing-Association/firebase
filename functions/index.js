@@ -27,7 +27,7 @@ function authenticate(req, res, next) {
 			'Make sure you authorize your request by providing the following HTTP header:',
 			'Authorization: Bearer <Firebase ID Token>',
 			'or by passing a "__session" cookie.');
-		res.send(pug.renderFile('./views/signin.pug'));
+		return next();
 	} else {
 		let idToken;
 		if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
@@ -43,12 +43,22 @@ function authenticate(req, res, next) {
 			return next();
 		}).catch(error => {
 			console.error('Error while verifying Firebase ID token:', error);
-			res.send(pug.renderFile('./views/signin.pug'));
+			return next();
 		});
 	}
 }
 
-app.get('/', (req, res) => {
+const QRCode = require('qrcode');
+const qrOptions = {
+	margin: 0,
+	scale: 10,
+	color: {
+		dark: '#F89939FF',
+		light: '#FFFFFF00'
+	}
+};
+
+app.get('/', authenticate, (req, res) => {
 	db.collection('prizes').orderBy('order').get().then((prizesSnapshot) => {
 		var data = {
 			title: 'TigerHacks'
@@ -81,34 +91,22 @@ app.get('/', (req, res) => {
 					infoSnapshot.docs.forEach((infoDoc) => {
 						data.info[infoDoc.id] = infoDoc.data();
 					});
-					res.send(pug.renderFile('./views/index.pug', data));
+					if (req.user) {
+						QRCode.toDataURL(`https://tigerhacks.com/profile/${req.user.user_id}`, qrOptions, (err, qrData) => {
+							db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {
+								data.user = {
+									id: qrData,
+									info: userDoc.exists ? userDoc.data() : req.user,
+									registered: userDoc.exists
+								};
+								res.send(pug.renderFile('./views/index.pug', data));
+							});
+						});
+					} else {
+						res.send(pug.renderFile('./views/index.pug', data));
+					}
 				});
 			});
-		});
-	});
-});
-
-const QRCode = require('qrcode');
-const qrOptions = {
-	margin: 0,
-	scale: 10,
-	color: {
-		dark: '#F89939FF',
-		light: '#FFFFFF00'
-	}
-};
-
-app.get('/profile', authenticate, (req, res) => {
-	db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {
-		if (!userDoc.exists) {
-			return res.redirect('/register');
-		}
-		QRCode.toDataURL(`https://tigerhacks.com/profile/${req.user.user_id}`, qrOptions , (err, qrData) => {
-			const userInfo = {
-				id: qrData,
-				name: userDoc.get('name')
-			};
-			res.send(pug.renderFile('./views/profile.pug', { title: `${userInfo.name} | TigerHacks Profile`, user: userInfo }));
 		});
 	});
 });
@@ -119,24 +117,21 @@ app.get('/profile/:user', (req, res) => {
 	});
 });
 
-app.get('/register', authenticate, (req, res) => {
-	db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {
-		if (userDoc.exists) {
-			return res.redirect('/profile');
-		}
-		res.send(pug.renderFile('./views/register.pug', { title: 'Register for TigerHacks', user: req.user }));
-	});
-});
-
 app.post('/register', authenticate, (req, res) => {
 	const busboy = new Busboy({ headers: req.headers });
 
-	const fields = {};
+	const fields = {
+		dietary_restrictions: []
+	};
 	var resume = null;
 
 	busboy.on('field', (name, value) => {
 		console.log(`Processed field ${name}: ${value}`);
-		fields[name] = value;
+		if (name == 'dietary_restrictions') {
+			fields.dietary_restrictions.push(value);
+		} else {
+			fields[name] = value;
+		}
 	});
 
 	var promise = null;
@@ -171,28 +166,12 @@ app.post('/register', authenticate, (req, res) => {
 			fields.th_terms = fields.th_terms == 'on';
 			fields.reimbursement = fields.reimbursement == 'on';
 			fields.checkins = [];
-			db.collection('participants').doc(req.user.user_id).set(fields);
-			res.redirect('/profile');
+			db.collection('participants').doc(req.user.user_id).set(fields, {merge: true});
+			res.redirect('/');
 		});
 	});
 
 	busboy.end(req.rawBody);
-});
-
-app.get('/signin', authenticate, (req, res) => {
-	if (req.user) {
-		db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {
-			if (userDoc.exists) {
-				return res.redirect('/profile');
-			} else {
-				return res.redirect('/register');
-			}
-		}).catch((error) => {
-			return res.redirect('/register');
-		});
-	} else {
-		res.send(pug.renderFile('./views/signin.pug'));
-	}
 });
 
 app.post('/setSession', (req, res) => {

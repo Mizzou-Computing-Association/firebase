@@ -40,9 +40,8 @@ html
             if user
               .col.s12.m4
                 h2 Profile
-                h4= user.info.name
+                h3.center TigerPass
                 img(style='width: 100%' src=user.id alt='TigerPass')
-                p.center TigerPass
                 center
                   button#signout.btn-large Sign Out
               .col.s12.m8
@@ -173,11 +172,13 @@ html
                     .col.s12
                       .card.schedule
                         .card-content
-                          p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'})
-                          span.card-title= event.title
-                          if event.location && event.location != ''
-                            p= '@ ' + event.location
-                          p= event.description
+                          p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
+                          span.card-title.activator= event.title
+                        if event.description && event.description != ''
+                          .card-reveal
+                            p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
+                            span.card-title= event.title
+                            p= event.description
         #tab-sponsors.container
           h2 Sponsors
           .row
@@ -190,12 +191,15 @@ html
                       div(class='col s12 m' + Math.max(3, 12/sponsors[level].length))
                         .card
                           .card-image.waves-effect.waves-block.waves-light
-                            img.activator(src=sponsor.image)
-                          .card-reveal
-                            span.card-title=sponsor.name
-                              i.material-icons.right close
+                            a.modal-trigger(href='#' + sponsor.name)
+                              img(src=sponsor.image)
+                        .modal(id=sponsor.name)
+                          .modal-content
+                            h4= sponsor.name
                             p= sponsor.description
-                            a(href=sponsor.website) Visit
+                          .modal-footer
+                            a(href=sponsor.website target='_blank') Website
+                            a.modal-close.waves-effect.waves-green.btn-flat(href='#!') Close
 
             else
               h3 Our sponsors aren&apos;t finalized for 2019, check back soon!
@@ -241,6 +245,7 @@ html
         });
         $('.tabs').tabs();
         $('select').formSelect();
+        $('.modal').modal();
         $('form').submit(() => {
           window.localStorage.setItem('open', true);
         });

@@ -198,8 +198,8 @@ html
                             h4= sponsor.name
                             p= sponsor.description
                           .modal-footer
-                            a(href=sponsor.website target='_blank') Website
-                            a.modal-close.waves-effect.waves-green.btn-flat(href='#!') Close
+                            a.btn-flat.waves-effect.waves-dark(href=sponsor.website target='_blank') Website
+                            a.modal-close.waves-effect.waves-dark.btn-flat(href='#!') Close
 
             else
               h3 Our sponsors aren&apos;t finalized for 2019, check back soon!
@@ -232,10 +232,12 @@ html
       $(document).ready(() => {
         if (window.localStorage.getItem('open')) {
           $('#content').addClass('open');
+          $('.modal').modal();
           window.localStorage.removeItem('open');
         }
         $('#register').click(() => {
           $('#content').addClass('open');
+          $('.modal').modal();
         });
         $('#close').click(() => {
           $('#content').removeClass('open');
@@ -245,7 +247,6 @@ html
         });
         $('.tabs').tabs();
         $('select').formSelect();
-        $('.modal').modal();
         $('form').submit(() => {
           window.localStorage.setItem('open', true);
         });

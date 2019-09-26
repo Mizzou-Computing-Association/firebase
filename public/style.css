@@ -118,6 +118,10 @@ body {
 	}
 }
 
+.modal {
+	background-color: --var(background-color);
+}
+
 h2 {
 	font-size: 3.33rem;
 	display: inline;

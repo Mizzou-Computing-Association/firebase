@@ -118,8 +118,8 @@ body {
 	}
 }
 
-.modal {
-	background-color: --var(background-color);
+.modal, .modal-content, .modal-footer {
+	background-color: var(--background-color)!important;
 }
 
 h2 {

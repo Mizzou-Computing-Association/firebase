@@ -131,12 +131,15 @@ html
                       .row
                         .col.s12
                           button.btn.btn-large.right(type='submit')= user.registered ? 'Update Info' : 'Register'
-            else
+            else.center
               h2 Sign in to register
               #auth-ui-container
         #tab-about.container
           h2 About TigerHacks
           .row
+            each faq in info.tigerhacks.faq
+              .col.s12.m4
+
             .col.s12.m4
               h5 What is TigerHacks?
               p= info.tigerhacks.about
@@ -149,16 +152,15 @@ html
         #tab-prizes.container
           h2 Prizes
           if prizes && prizes.length != 0
-            table
-              thead
-                tr
-                  th Category
-                  th.right Prize
-              tbody
-                each prize in prizes
-                  tr
-                    td= prize.title
-                    td.right= prize.reward
+            each category in Object.keys(prizes)
+              h4= category
+              .row
+                each prize in prizes[category]
+                  .col.s12(class='m' + (12/prizes[category].length))
+                    h6= prize.title
+                    p= prize.reward
+                    if prize.sponsor
+                      p= 'Sponsored by ' + sponsor
           else
             h4 Prizes coming soon
         #tab-schedule.container
@@ -167,17 +169,18 @@ html
             each date in Object.keys(schedule)
               div(class='col s12 m' + (12/Object.keys(schedule).length))
                 h5= date
-                each event in schedule[date]
+                each event, index in schedule[date]
                   .row
                     .col.s12
                       .card.schedule
                         .card-content
                           p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
-                          span.card-title.activator= event.title
-                        if event.description && event.description != ''
-                          .card-reveal
+                          span.card-title.modal-trigger(data-target=date + index)= event.title
+                        .modal(id=date + index)
+                          .modal-content
+                            h4= event.title
+                              i.right.material-icons.modal-close close
                             p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
-                            span.card-title= event.title
                             p= event.description
         #tab-sponsors.container
           h2 Sponsors

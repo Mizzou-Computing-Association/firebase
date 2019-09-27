@@ -63,9 +63,15 @@ app.get('/', authenticate, (req, res) => {
 		var data = {
 			title: 'TigerHacks'
 		};
-		data.prizes = prizesSnapshot.docs.map((prizeDoc) => {
+		var rawPrizes = prizesSnapshot.docs.map((prizeDoc) => {
 			return prizeDoc.data();
 		});
+		data.prizes = rawPrizes.reduce((result, item) => {
+			const key = item.prizeType;
+			if (!result[key]) result[key] = [];
+			result[key].push(item);
+			return result;
+		}, {});
 		db.collection('schedule').orderBy('time').get().then((scheduleSnapshot) => {
 			var rawSchedule = scheduleSnapshot.docs.map((scheduleDoc) => {
 				return scheduleDoc.data();

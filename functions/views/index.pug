@@ -265,7 +265,8 @@ html
         ui.start('#auth-ui-container', {
           signInOptions: [
             firebase.auth.EmailAuthProvider.PROVIDER_ID,
-            firebase.auth.GithubAuthProvider.PROVIDER_ID
+            firebase.auth.GithubAuthProvider.PROVIDER_ID,
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID
           ],
           signInFlow: 'popup',
           credentialHelper: firebaseui.auth.CredentialHelper.NONE,

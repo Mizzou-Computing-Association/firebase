@@ -75,6 +75,7 @@ body {
 	background-color: var(--background-color);
 	background-color: var(--background-color-translucent);
 	padding: 0;
+	animation:  0.6s;
 }
 
 @media only screen and (min-width: 768px) {
@@ -95,6 +96,15 @@ body {
 		left: 0;
 		top: 0;
 		border-radius: 0;
+	}
+}
+
+@keyframes animatezoom {
+	from {
+		transform: scale(0);
+	}
+	to {
+		transform: scale(1);
 	}
 }
 
@@ -120,8 +130,7 @@ body {
 	background-color: var(--background-color)!important;
 }
 
-h2 {
-	font-size: 3.33rem;
+h2.title {
 	display: inline;
 }
 
@@ -250,4 +259,13 @@ a.tablink i {
 		transform: scale(1.2);
 		margin-top: 30px;
 	}
+}
+
+.collapsible {
+	border: none!important;
+}
+
+.collapsible-header, .collapsible-body {
+	border-bottom: 1px solid var(--link-color)!important;
+	background-color: var(--background-color);
 }

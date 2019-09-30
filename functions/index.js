@@ -97,6 +97,13 @@ app.get('/', authenticate, (req, res) => {
 					infoSnapshot.docs.forEach((infoDoc) => {
 						data.info[infoDoc.id] = infoDoc.data();
 					});
+					let faq = data.info.tigerhacks.faq.reduce((result, item) => {
+						const key = item.category;
+						if (!result[key]) result[key] = [];
+						result[key].push(item);
+						return result;
+					}, {});
+					data.info.tigerhacks.faq = faq;
 					if (req.user) {
 						QRCode.toDataURL(`https://tigerhacks.com/profile/${req.user.user_id}`, qrOptions, (err, qrData) => {
 							db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {

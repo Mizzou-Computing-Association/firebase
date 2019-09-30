@@ -18,8 +18,8 @@ html
     #bg
     #landing.z-depth-5
       img#logo(src='/tiger_big.png')
-      h2(style='color: #F89939') tiger
-      h2 hacks
+      h2.title(style='color: #F89939') tiger
+      h2.title hacks
       h5= info.tigerhacks.dates
       button#register.btn-large Registration & Info
       br
@@ -131,33 +131,29 @@ html
                       .row
                         .col.s12
                           button.btn.btn-large.right(type='submit')= user.registered ? 'Update Info' : 'Register'
-            else.center
-              h2 Sign in to register
-              #auth-ui-container
+            else
+              .center
+                h2 Sign in to register
+                #auth-ui-container
         #tab-about.container
-          h2 About TigerHacks
-          .row
-            each faq in info.tigerhacks.faq
-              .col.s12.m4
-
-            .col.s12.m4
-              h5 What is TigerHacks?
-              p= info.tigerhacks.about
-            .col.s12.m4
-              h5 What is a hackathon?
-              p= info.tigerhacks.hackathon
-            .col.s12.m4
-              h5 Theme
-              p= info.tigerhacks.theme
+          h2 TigerHacks FAQ
+          each category in Object.keys(info.tigerhacks.faq)
+            h4= category
+            ul.collapsible
+              each faq in info.tigerhacks.faq[category]
+                li
+                  .collapsible-header= faq.question
+                  .collapsible-body
+                    p= faq.answer
         #tab-prizes.container
-          h2 Prizes
+          h2.center Prizes
           if prizes && prizes.length != 0
             each category in Object.keys(prizes)
-              h4= category
+              h3.center= category
               .row
                 each prize in prizes[category]
-                  .col.s12(class='m' + (12/prizes[category].length))
-                    h6= prize.title
+                  div(class='center col s12 m' + (12/prizes[category].length))
+                    h5= prize.title
                     p= prize.reward
                     if prize.sponsor
                       p= 'Sponsored by ' + sponsor
@@ -187,22 +183,23 @@ html
           .row
             if sponsors && Object.keys(sponsors).length != 0
               each level in Object.keys(sponsors)
-                .col.s12
-                  h4.sponsor-header= level
-                  .row
-                    each sponsor in sponsors[level]
-                      div(class='col s12 m' + Math.max(3, 12/sponsors[level].length))
-                        .card
-                          .card-image.waves-effect.waves-block.waves-light
-                            a.modal-trigger(href='#' + sponsor.name)
-                              img(src=sponsor.image)
-                        .modal(id=sponsor.name)
-                          .modal-content
-                            h4= sponsor.name
-                              i.right.material-icons.modal-close close
-                            p= sponsor.description
-                          .modal-footer
-                            a.btn-flat.waves-effect.waves-dark(href=sponsor.website target='_blank') Website
+                if sponsors[level].length != 0
+                  .col.s12
+                    h4.sponsor-header= level
+                    .row
+                      each sponsor in sponsors[level]
+                        div(class='col s12 m' + Math.max(3, 12/sponsors[level].length))
+                          .card
+                            .card-image.waves-effect.waves-block.waves-light
+                              a.modal-trigger(href='#' + sponsor.name)
+                                img(src=sponsor.image)
+                          .modal(id=sponsor.name)
+                            .modal-content
+                              h4= sponsor.name
+                                i.right.material-icons.modal-close close
+                              p= sponsor.description
+                            .modal-footer
+                              a.btn-flat.waves-effect.waves-dark(href=sponsor.website target='_blank') Website
 
             else
               h3 Our sponsors aren&apos;t finalized for 2019, check back soon!
@@ -216,7 +213,7 @@ html
         li.tab.col.s2
           a.tablink(href='#tab-about')
             i.material-icons.tab-icon info
-            span.tab-title About
+            span.tab-title FAQ
         li.tab.col.s2
           a.tablink(href='#tab-prizes')
             i.material-icons.tab-icon redeem
@@ -241,6 +238,9 @@ html
         $('#register').click(() => {
           $('#content').addClass('open');
           $('.modal').modal();
+          $('.tabs').tabs();
+          $('select').formSelect();
+          $('.collapsible').collapsible();
         });
         $('#close').click(() => {
           $('#content').removeClass('open');
@@ -248,8 +248,6 @@ html
         $('#bg').click(() => {
           $('#content').removeClass('open');
         });
-        $('.tabs').tabs();
-        $('select').formSelect();
         $('form').submit(() => {
           window.localStorage.setItem('open', true);
         });

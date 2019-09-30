@@ -8,6 +8,7 @@ const bucket = admin.storage().bucket();
 const Busboy = require('busboy');
 
 const express = require('express');
+const cors = require('cors');
 const cookieParser = require('cookie-parser')();
 const bodyParser = require('body-parser');
 
@@ -15,6 +16,7 @@ const pug = require('pug');
 
 const app = express();
 
+app.use(cors({ origin: true }));
 app.use(cookieParser);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

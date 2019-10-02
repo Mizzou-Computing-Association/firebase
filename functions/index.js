@@ -61,6 +61,7 @@ const qrOptions = {
 };
 
 app.get('/', authenticate, (req, res) => {
+	let pugFile = req.query.dev ? './views/index-dev.pug' : './views/index.pug';
 	db.collection('prizes').orderBy('order').get().then((prizesSnapshot) => {
 		var data = {
 			title: 'TigerHacks'
@@ -114,15 +115,83 @@ app.get('/', authenticate, (req, res) => {
 									info: userDoc.exists ? userDoc.data() : req.user,
 									registered: userDoc.exists
 								};
-								res.send(pug.renderFile('./views/index.pug', data));
+								res.send(pug.renderFile(pugFile, data));
 							});
 						});
 					} else {
-						res.send(pug.renderFile('./views/index.pug', data));
+						res.send(pug.renderFile(pugFile, data));
 					}
 				});
 			});
 		});
+	});
+});
+
+app.get('/admin', authenticate, (req, res) => {
+	if (!req.user) {
+		res.redirect('/');
+	}
+	db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {
+		if (userDoc.get('admin')) {
+			db.collection('prizes').orderBy('order').get().then((prizesSnapshot) => {
+				var data = {
+					title: 'TigerHacks'
+				};
+				var rawPrizes = prizesSnapshot.docs.map((prizeDoc) => {
+					var prizeData = prizeDoc.data();
+					prizeData.id = prizeDoc.id;
+					return prizeData;
+				});
+				data.prizes = rawPrizes.reduce((result, item) => {
+					const key = item.prizeType;
+					if (!result[key]) result[key] = [];
+					result[key].push(item);
+					return result;
+				}, {});
+				db.collection('schedule').orderBy('time').get().then((scheduleSnapshot) => {
+					var rawSchedule = scheduleSnapshot.docs.map((scheduleDoc) => {
+						var eventData = scheduleDoc.data();
+						eventData.id = scheduleDoc.id;
+						return eventData;
+					});
+					data.schedule = rawSchedule.reduce((result, item) => {
+						const key = item.time.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Chicago'});
+						if (!result[key]) result[key] = [];
+						result[key].push(item);
+						return result;
+					}, {});
+					db.collection('sponsors').orderBy('level').get().then((sponsorSnapshot) => {
+						var rawSponsors = sponsorSnapshot.docs.map((sponsorDoc) => {
+							var sponsorData = sponsorDoc.data();
+							sponsorData.id = sponsorDoc.id;
+							return sponsorData;
+						});
+						data.sponsors = rawSponsors.reduce((result, item) => {
+							const key = levels[item.level];
+							if (!result[key]) result[key] = [];
+							result[key].push(item);
+							return result;
+						}, {});
+						db.collection('info').get().then((infoSnapshot) => {
+							data.info = {};
+							infoSnapshot.docs.forEach((infoDoc) => {
+								data.info[infoDoc.id] = infoDoc.data();
+							});
+							let faq = data.info.tigerhacks.faq.reduce((result, item) => {
+								const key = item.category;
+								if (!result[key]) result[key] = [];
+								result[key].push(item);
+								return result;
+							}, {});
+							data.info.tigerhacks.faq = faq;
+							res.send(pug.renderFile('./views/admin.pug', data));
+						});
+					});
+				});
+			});
+		} else {
+			res.redirect('/');
+		}
 	});
 });
 

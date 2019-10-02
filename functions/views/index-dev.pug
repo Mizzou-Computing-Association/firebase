@@ -4,12 +4,13 @@ html
     title TigerHacks
     link(rel='icon', href='/tiger_small.png')
     meta(name='viewport', content='width=device-width, initial-scale=1')
-    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css')
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+    script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
     script(src='https://use.fontawesome.com/2dcf4e58a9.js')
     link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
-    link(rel='stylesheet', href='/style.css')
+    link(rel='stylesheet', href='/style-dev.css')
     link(rel='stylesheet', href='https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css')
     script(src='https://www.gstatic.com/firebasejs/6.5.0/firebase-app.js')
     script(src='https://www.gstatic.com/firebasejs/6.5.0/firebase-auth.js')
@@ -34,8 +35,8 @@ html
           i.fa.fa-3x.fa-instagram(aria-hidden='true')
     #content
       i#close.material-icons close
-      .content
-        #tab-register.container
+      .content.tab-content
+        #profile.container.tab-pane.fade.show(role='tabpanel')
           .row
             if user
               .col.s12.m4
@@ -43,36 +44,33 @@ html
                 h3.center TigerPass
                 img(style='width: 100%' src=user.id alt='TigerPass')
                 center
-                  button#signout.btn-large Sign out
-                  if user.info.admin
-                    br
-                    a.btn-large(href='admin') Admin
+                  button#signout.btn-large Sign Out
               .col.s12.m8
                 h2= user.registered ? 'Update Info' : 'Register'
                 form(action='/register' enctype='multipart/form-data' method='POST')
                   .row
                     .col.s12
                       .row
-                        .input-field.col.s12.m6
-                          input.validate(name='name' placeholder='' type='text' id='name' required value= user.info.name ? user.info.name : '')
+                        .form-group.col.s12.m6
+                          input.form-control.validate(name='name' placeholder='' type='text' id='name' required value= user.info.name ? user.info.name : '')
                           label(for='first_name') Full name
-                          span.helper-text(data-error='This field is required' data-success='')
-                        .input-field.col.s12.m6
-                          input.validate(name='email' placeholder='' type='email' id='email' required pattern='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.[a-zA-Z]+$' value= user.info.email ? user.info.email : '')
+                          span.form-text.text-muted(data-error='This field is required' data-success='')
+                        .form-group.col.s12.m6
+                          input.form-control.validate(name='email' placeholder='' type='email' id='email' required pattern='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.[a-zA-Z]+$' value= user.info.email ? user.info.email : '')
                           label(for='email') Email
-                          span.helper-text(data-error='Please enter a valid email' data-success='')
+                          span.form-text.text-muted(data-error='Please enter a valid email' data-success='')
                       .row
-                        .input-field.col.s12.m6
-                          input.validate(name='school' placeholder='' type='text' id='school' required value= user.info.school ? user.info.school : '')
+                        .form-group.col.s12.m6
+                          input.form-control.validate.autocomplete(name='school' placeholder='' type='text' id='school' required value= user.info.school ? user.info.school : '')
                           label(for='school') School
-                          span.helper-text(data-error='Please enter your school or university' data-success='')
-                        .input-field.col.s12.m6
-                          input.validate(name='major' placeholder='' type='text' id='major' required value= user.info.major ? user.info.major : '')
+                          span.form-text.text-muted(data-error='Please enter your school or university' data-success='')
+                        .form-group.col.s12.m6
+                          input.form-control.validate(name='major' placeholder='' type='text' id='major' required value= user.info.major ? user.info.major : '')
                           label(for='major') Major
-                          span.helper-text(data-error='This field is required' data-success='')
+                          span.form-text.text-muted(data-error='This field is required' data-success='')
                       .row
-                        .input-field.col.s12.m6
-                          select(name='graduation_year' required)
+                        .form-group.col.s12.m6
+                          select.form-control(name='graduation_year' required)
                             option(value='2018' selected= user.info.graduation_year == '2018') 2018
                             option(value='2019' selected= user.info.graduation_year == '2019') 2019
                             option(value='2020' selected= user.info.graduation_year == '2020') 2020
@@ -81,8 +79,8 @@ html
                             option(value='2023' selected= user.info.graduation_year == '2023') 2023
                             option(value='2024' selected= user.info.graduation_year == '2024') 2024
                           label Graduation year
-                        .input-field.col.s12.m6
-                          select(name='shirt_size' required)
+                        .form-group.col.s12.m6
+                          select.form-control(name='shirt_size' required)
                             option(value='XS' selected= user.info.shirt_size == 'XS') XS
                             option(value='S' selected= user.info.shirt_size == 'S') S
                             option(value='M' selected= user.info.shirt_size == 'M') M
@@ -91,8 +89,8 @@ html
                             option(value='XXL' selected= user.info.shirt_size == 'XXL') XXL
                           label Shirt size
                       .row
-                        .input-field.col.s12.m6
-                          select(name='dietary_restrictions' multiple)
+                        .form-group.col.s12.m6
+                          select.form-control(name='dietary_restrictions' multiple)
                             option(value='Vegetarian' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Vegetarian')) Vegetarian
                             option(value='Kosher' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Kosher')) Kosher
                             option(value='Halal' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Halal')) Halal
@@ -101,36 +99,30 @@ html
                             option(value='Allergy' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Allergy')) Allergy (please specify in notes)
                             option(value='Other' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Other')) Other (please specify in notes)
                           label Dietary restrictions
-                        .input-field.col.s12.m6
+                        .form-group.col.s12.m6
                           input(name='notes' type='text' id='notes' value= user.info.notes ? user.info.notes : '')
                           label(for='notes') Notes
                       .row
-                        .file-field.input-field.col.s12.m6
+                        .file-field.form-group.col.s12.m6
                           .btn.btn-large
                             span Upload resume
                             input(name='resume' type='file' accept='.pdf' required=!user.registered)
                           .file-path-wrapper
-                            input.file-path.validate(type='text')
-                        .input-field.col.s12.m6
-                          p
-                            label
-                              input(name='reimbursement' type='checkbox' checked=user.info.reimbursement)
-                              span Will you need travel reimbursement?
+                            input.form-control.file-path.validate(type='text')
+                        .form-group.form-check.col.s12.m6
+                          input#reimbursement.form-check-input(name='reimbursement' type='checkbox' checked=user.info.reimbursement)
+                          label.form-check-label(for='reimbursement') Will you need travel reimbursement?
                       if !user.registered
                         .row
-                          .input-field.col.s12.m6
-                            p
-                              label
-                                input(name='mlh_terms' type='checkbox' required)
-                                span I have read and agree to the #[a(href='https://static.mlh.io/docs/mlh-code-of-conduct.pdf') MLH Code of Conduct]
-                                  |, the #[a(href='https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md') MLH Contest Terms and Conditions]
-                                  |, and the #[a(href='https://mlh.io/privacy') MLH Privacy Policy]
-                          .input-field.col.s12.m6
-                            p
-                              label
-                                input(name='th_terms' type='checkbox' required)
-                                span I authorize you to share my application/registration information for event administration, ranking, MLH administration, 
-                                  |pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the MLH Privacy Policy.
+                          .form-group.form-check.col.s12.m6
+                            input#mlh_terms.form-check-input(name='mlh_terms' type='checkbox' required)
+                            label.form-check-label(for='mlh_terms') I have read and agree to the #[a(href='https://static.mlh.io/docs/mlh-code-of-conduct.pdf') MLH Code of Conduct]
+                              |, the #[a(href='https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md') MLH Contest Terms and Conditions]
+                              |, and the #[a(href='https://mlh.io/privacy') MLH Privacy Policy]
+                          .form-group.form-check.col.s12.m6
+                            input#th_terms.form-check-input(name='th_terms' type='checkbox' required)
+                            label.form-check-label(for='th_terms') I authorize you to share my application/registration information for event administration, ranking, MLH administration, 
+                              |pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the MLH Privacy Policy.
                       .row
                         .col.s12
                           button.btn.btn-large.right(type='submit')= user.registered ? 'Update Info' : 'Register'
@@ -138,17 +130,19 @@ html
               .center
                 h2 Sign in to register
                 #auth-ui-container
-        #tab-about.container
+        #about.container.tab-pane.fade(role='tabpanel')
           h2 TigerHacks FAQ
           each category in Object.keys(info.tigerhacks.faq)
             h4= category
-            ul.collapsible
-              each faq in info.tigerhacks.faq[category]
-                li
-                  .collapsible-header= faq.question
-                  .collapsible-body
-                    p= faq.answer
-        #tab-prizes.container
+            .accordion#faq-collapse
+              each faq, index in info.tigerhacks.faq[category]
+                .card
+                  .card-header
+                    h2.mb-0
+                      button.btn-btn-link(type='button' data-toggle='collapse' data=target=category + '_' + index)= faq.question
+                  .collapse(id=category + '_' + index data-parent='faq-collapse')
+                    .card-body= faq.answer
+        #prizes.container.tab-pane.fade(role='tabpanel')
           h2.center Prizes
           if prizes && prizes.length != 0
             each category in Object.keys(prizes)
@@ -162,26 +156,26 @@ html
                       p= 'Sponsored by ' + sponsor
           else
             h4 Prizes coming soon
-        #tab-schedule.container
+        #schedule.container.tab-pane.fade(role='tabpanel')
           h2 Schedule
           .row
             each date in Object.keys(schedule)
               div(class='col s12 m' + (12/Object.keys(schedule).length))
                 h5= date
-                each event, index in schedule[date]
-                  .row
-                    .col.s12
-                      .card.schedule
-                        .card-content
-                          p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
-                          span.card-title.modal-trigger(data-target=date + index)= event.title
-                        .modal(id=date + index)
-                          .modal-content
-                            h4= event.title
-                              i.right.material-icons.modal-close close
-                            p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
-                            p= event.description
-        #tab-sponsors.container
+                // each event, index in schedule[date]
+                //   .row
+                //     .col.s12
+                //       .card.schedule
+                //         .card-content
+                //           p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
+                //           span.card-title.modal-trigger(data-target=date + index)= event.title
+                //         .modal(id=date + index)
+                //           .modal-content
+                //             h4= event.title
+                //               i.right.material-icons.modal-close close
+                //             p= event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (event.location && event.location != '' ? ' @ ' + event.location : '')
+                //             p= event.description
+        #sponsors.container.tab-pane.fade(role='tabpanel')
           h2 Sponsors
           .row
             if sponsors && Object.keys(sponsors).length != 0
@@ -189,44 +183,44 @@ html
                 if sponsors[level].length != 0
                   .col.s12
                     h4.sponsor-header= level
-                    .row
-                      each sponsor in sponsors[level]
-                        div(class='col s12 m' + Math.max(3, 12/sponsors[level].length))
-                          .card
-                            .card-image.waves-effect.waves-block.waves-light
-                              a.modal-trigger(href='#' + sponsor.name)
-                                img(src=sponsor.image)
-                          .modal(id=sponsor.name)
-                            .modal-content
-                              h4= sponsor.name
-                                i.right.material-icons.modal-close close
-                              p= sponsor.description
-                            .modal-footer
-                              a.btn-flat.waves-effect.waves-dark(href=sponsor.website target='_blank') Website
+                    // .row
+                    //   each sponsor in sponsors[level]
+                    //     div(class='col s12 m' + Math.max(3, 12/sponsors[level].length))
+                    //       .card
+                    //         .card-image.waves-effect.waves-block.waves-light
+                    //           a.modal-trigger(href='#' + sponsor.name)
+                    //             img(src=sponsor.image)
+                    //       .modal(id=sponsor.name)
+                    //         .modal-content
+                    //           h4= sponsor.name
+                    //             i.right.material-icons.modal-close close
+                    //           p= sponsor.description
+                    //         .modal-footer
+                    //           a.btn-flat.waves-effect.waves-dark(href=sponsor.website target='_blank') Website
 
             else
               h3 Our sponsors aren&apos;t finalized for 2019, check back soon!
             center
               a.waves-effect.waves-light.btn-large(href='mailto:tigerhackshd@gmail.com' target='_blank') Sponsor us!
-      ul.tabs
-        li.tab.col.s2
-          a.tablink.active(href='#tab-register')
+      ul.nav.nav-pills(role='tablist')
+        li.nav-item
+          a.nav-link.active(data-toggle='pill' href='#profile' aria-selected='true' id='tab-register' role='tab')
             i.material-icons.tab-icon person
             span.tab-title= user ? 'Profile' : 'Register'
-        li.tab.col.s2
-          a.tablink(href='#tab-about')
+        li.nav-item
+          a.nav-link(data-toggle='pill' href='#about' aria-selected='false' id='tab-about' role='tab')
             i.material-icons.tab-icon info
             span.tab-title FAQ
-        li.tab.col.s2
-          a.tablink(href='#tab-prizes')
+        li.nav-item
+          a.nav-link(data-toggle='pill' href='#prizes' aria-selected='false' id='tab-prizes' role='tab')
             i.material-icons.tab-icon redeem
             span.tab-title Prizes
-        li.tab.col.s3
-          a.tablink(href='#tab-schedule')
+        li.nav-item
+          a.nav-link(data-toggle='pill' href='#schedule' aria-selected='false' id='tab-schedule' role='tab')
             i.material-icons.tab-icon event
             span.tab-title Schedule
-        li.tab.col.s3
-          a.tablink(href='#tab-sponsors')
+        li.nav-item
+          a.nav-link(data-toggle='pill' href='#sponsors' aria-selected='false' id='tab-sponsors' role='tab')
             i.material-icons.tab-icon star
             span.tab-title Sponsors
     a#mlh-trust-badge(style='display:block;max-width:100px;min-width:60px;position:fixed;right:50px;top:0;width:10%;z-index:2' href='https://mlh.io/seasons/na-2020/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2020-season&utm_content=gray' target='_blank')
@@ -240,10 +234,10 @@ html
         }
         $('#register').click(() => {
           $('#content').addClass('open');
-          $('.modal').modal();
-          $('.tabs').tabs();
-          $('select').formSelect();
-          $('.collapsible').collapsible();
+          // $('.modal').modal();
+          // $('.tabs').tabs();
+          // $('select').formSelect();
+          // $('.collapsible').collapsible();
         });
         $('#close').click(() => {
           $('#content').removeClass('open');
@@ -291,8 +285,8 @@ html
           $.cookie('__session', null, { path: '/' });
           window.location.reload();
         });
-        $('.modal').modal();
-        $('.tabs').tabs();
-        $('select').formSelect();
-        $('.collapsible').collapsible();
+        // $('.modal').modal();
+        // $('.tabs').tabs();
+        // $('select').formSelect();
+        // $('.collapsible').collapsible();
       });

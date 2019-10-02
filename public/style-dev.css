@@ -250,6 +250,20 @@ a.tablink i {
 	color: var(--link-color);
 }
 
+.nav {
+	width: 100%;
+	margin: auto;
+}
+
+.nav-link {
+	width: 20%;
+	text-align: center;
+}
+
+.nav-link.active {
+	background-color: var(--text-color)!important;
+}
+
 #signout {
 	margin: 10px;
 }
@@ -268,8 +282,4 @@ a.tablink i {
 .collapsible-header, .collapsible-body {
 	border-bottom: 1px solid var(--link-color)!important;
 	background-color: var(--background-color);
-}
-
-.card-image {
-	background-color: #FEF8E2;
 }

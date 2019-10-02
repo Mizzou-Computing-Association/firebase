@@ -1,0 +1,68 @@
+doctype html
+html(lang='en')
+  head
+    title TigerHacks
+    link(rel='icon', href='/tiger_small.png')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')
+    script(src='https://use.fontawesome.com/2dcf4e58a9.js')
+    link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
+    style.
+      #save:hover {
+        cursor: pointer;
+      }
+  body
+    .container
+      h1 TigerHacks Admin Panel
+      .row
+        .col.s12
+          ul.tabs
+            li.tab.col.s2
+              a.active(href='#participants') Participants
+            li.tab.col.s2
+              a(href='#faq') FAQ
+            li.tab.col.s2
+              a(href='#schedule') Schedule
+            li.tab.col.s2
+              a(href='#prizes') Prizes
+            li.tab.col.s2
+              a(href='#sponsors') Sponsors
+        #participants
+        #schedule
+          each day in Object.keys(schedule)
+            h4= day
+            .row
+              each event in schedule[day]
+                .col.s12.m4
+                  .card
+                    .card-content
+                      input#title(type='text' placeholder='Event name' value=event.title data-event=event.id)
+                      input#location(type='text' placeholder='Location' value=event.location data-event=event.id)
+                      input#time.timepicker(type='text' placeholder='Time' value=event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) data-event=event.id)
+                      input#description(type='text' placeholder='Description' data-event=event.id value=event.description)
+                    .card-action
+                      p.save(data-event=event.id) Save
+    script(type='text/javascript').
+      $(document).ready(() => {
+        $('.tabs').tabs();
+        $('.timepicker').timepicker();
+        $('.save').click((eventObj) => {
+          eventObj.preventDefault();
+          console.log($(eventObj.target));
+          console.log(this);
+          console.log(this.data('event'));
+          console.log(event);
+          let title = $(`#title[data-event="${event}"]`).val();
+          let location = $(`#location[data-event="${event}"]`).val();
+          let time = $(`#time[data-event="${event}"]`).val();
+          let description = $(`#description[data-event="${event}"]`).val();
+          console.log({
+            title: title,
+            location: location,
+            time: time,
+            description: description
+          });
+        });
+      });

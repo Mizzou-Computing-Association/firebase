@@ -23,7 +23,7 @@ body {
   padding: 0;
 }
 
-form {
+form, .card-body {
   font-family: 'Source Sans Pro', sans-serif;
 }
 

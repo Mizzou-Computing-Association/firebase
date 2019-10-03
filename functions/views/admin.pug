@@ -4,50 +4,100 @@ html(lang='en')
     title TigerHacks
     link(rel='icon', href='/tiger_small.png')
     meta(name='viewport', content='width=device-width, initial-scale=1')
-    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css')
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
+    script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
     script(src='https://use.fontawesome.com/2dcf4e58a9.js')
     link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
-    style.
-      #save:hover {
-        cursor: pointer;
-      }
-  body
-    .container
-      h1 TigerHacks Admin Panel
-      .row
-        .col.s12
-          ul.tabs
-            li.tab.col.s2
-              a.active(href='#participants') Participants
-            li.tab.col.s2
-              a(href='#faq') FAQ
-            li.tab.col.s2
-              a(href='#schedule') Schedule
-            li.tab.col.s2
-              a(href='#prizes') Prizes
-            li.tab.col.s2
-              a(href='#sponsors') Sponsors
-        #participants
-        #schedule
-          each day in Object.keys(schedule)
-            h4= day
-            .row
-              each event in schedule[day]
-                .col.s12.m4
-                  .card
-                    .card-content
-                      input#title(type='text' placeholder='Event name' value=event.title data-event=event.id)
-                      input#location(type='text' placeholder='Location' value=event.location data-event=event.id)
-                      input#time.timepicker(type='text' placeholder='Time' value=event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) data-event=event.id)
-                      input#description(type='text' placeholder='Description' data-event=event.id value=event.description)
-                    .card-action
-                      p.save(data-event=event.id) Save
+  body(style='padding-top: 60px;')
+    nav.navbar.navbar-expand-md.navbar-light.bg-light.fixed-top
+      a.navbar-brand(href='#') TigerHacks Admin
+      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarContent')
+        span.navbar-toggler-icon
+      .collapse.navbar-collapse#navbarContent
+        .nav.nav-pills(role='tablist')
+          a.nav-item.nav-link.active(data-toggle='pill' href='#participants' role='tab') Participants
+          a.nav-item.nav-link.disabled(data-toggle='pill' href='#faq' role='tab') FAQ
+          a.nav-item.nav-link.disabled(data-toggle='pill' href='#schedule' role='tab') Schedule
+          a.nav-item.nav-link.disabled(data-toggle='pill' href='#prizes' role='tab') Prizes
+          a.nav-item.nav-link.disabled(data-toggle='pill' href='#sponsors' role='tab') Sponsors
+    .tab-content
+      #participants.tab-pane.fade.show.active(role='tabpanel')
+        table.table.table-striped.table-responsive
+          thead
+            tr
+              th(scope='col') Name
+              th(scope='col') Email
+              th(scope='col') School
+              th(scope='col') Major
+              th(scope='col') Graduation year
+              th(scope='col') Shirt Size
+              th(scope='col') Dietary restrictions
+              th(scope='col') Notes
+              th(scope='col') Resume
+              th(scope='col') Need reimbursement
+          tbody
+            each participant in participants
+              tr
+                td= participant.name
+                td= participant.email
+                td= participant.school
+                td= participant.major
+                td= participant.graduation_year
+                td= participant.shirt_size
+                td= participant.dietary_restrictions.length == 0 ? 'None' : participant.dietary_restrictions
+                td= participant.notes
+                td
+                  a(href=participant.resume target='_blank') Download
+                td= participant.reimbursement ? 'Yes' : 'No'
+      #faq.tab-pane.fade(role='tabpanel')
+        h1 Coming soon
+      #schedule.tab-pane.fade(role='tabpanel')
+        each date in Object.keys(schedule)
+          h3= date
+          each event in schedule[date]
+            .card
+              .card-body
+                input.form-control(type='text' placeholder='Event name' value=event.title name='title')
+                input.form-control(type='text' placeholder='Location' value=event.location name='location')
+                input.form-control(type='time')
+      #prizes.tab-pane.fade(role='tabpanel')
+        h1 Prizes
+      #sponsors.tab-pane.fade(role='tabpanel')
+        h1 Sponsors
+    //- .container
+    //-   h1 TigerHacks Admin Panel
+    //-   .row
+    //-     .col.s12
+    //-       ul.tabs
+    //-         li.tab.col.s2
+    //-           a.active(href='#participants') Participants
+    //-         li.tab.col.s2
+    //-           a(href='#faq') FAQ
+    //-         li.tab.col.s2
+    //-           a(href='#schedule') Schedule
+    //-         li.tab.col.s2
+    //-           a(href='#prizes') Prizes
+    //-         li.tab.col.s2
+    //-           a(href='#sponsors') Sponsors
+    //-     #participants
+    //-     #schedule
+    //-       each day in Object.keys(schedule)
+    //-         h4= day
+    //-         .row
+    //-           each event in schedule[day]
+    //-             .col.s12.m4
+    //-               .card
+    //-                 .card-content
+    //-                   input#title(type='text' placeholder='Event name' value=event.title data-event=event.id)
+    //-                   input#location(type='text' placeholder='Location' value=event.location data-event=event.id)
+    //-                   input#time.timepicker(type='text' placeholder='Time' value=event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) data-event=event.id)
+    //-                   input#description(type='text' placeholder='Description' data-event=event.id value=event.description)
+    //-                 .card-action
+    //-                   p.save(data-event=event.id) Save
     script(type='text/javascript').
       $(document).ready(() => {
-        $('.tabs').tabs();
-        $('.timepicker').timepicker();
         $('.save').click((eventObj) => {
           eventObj.preventDefault();
           console.log($(eventObj.target));

@@ -184,7 +184,12 @@ app.get('/admin', authenticate, (req, res) => {
 								return result;
 							}, {});
 							data.info.tigerhacks.faq = faq;
-							res.send(pug.renderFile('./views/admin.pug', data));
+							db.collection('participants').get().then((participantsSnapshot) => {
+								data.participants = participantsSnapshot.docs.map((participantDoc) => {
+									return participantDoc.data();
+								});
+								res.send(pug.renderFile('./views/admin.pug', data));
+							});
 						});
 					});
 				});

@@ -23,10 +23,6 @@ body {
   padding: 0;
 }
 
-form, .card-body {
-  font-family: 'Source Sans Pro', sans-serif;
-}
-
 a {
   color: var(--link-color)!important;
 }
@@ -128,10 +124,6 @@ p {
 	font-size: 18;
 	font-family: 'Source Sans Pro', sans-serif;
 	margin: 0px;
-}
-
-table {
-  font-family: 'Source Sans Pro', sans-serif;
 }
 
 footer {

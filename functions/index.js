@@ -113,6 +113,7 @@ app.get('/', authenticate, (req, res) => {
 								data.user = {
 									id: qrData,
 									info: userDoc.exists ? userDoc.data() : req.user,
+									admin: data.info.admins.users.includes(req.user.user_id),
 									registered: userDoc.exists
 								};
 								res.send(pug.renderFile(pugFile, data));
@@ -130,9 +131,10 @@ app.get('/', authenticate, (req, res) => {
 app.get('/admin', authenticate, (req, res) => {
 	if (!req.user) {
 		res.redirect('/');
+		return;
 	}
-	db.collection('participants').doc(req.user.user_id).get().then((userDoc) => {
-		if (userDoc.get('admin')) {
+	db.collection('info').doc('admins').get().then((adminDoc) => {
+		if (adminDoc.get('users').includes(req.user.user_id)) {
 			db.collection('prizes').orderBy('order').get().then((prizesSnapshot) => {
 				var data = {
 					title: 'TigerHacks'
@@ -291,65 +293,63 @@ app.post('/setSession', (req, res) => {
 	});
 });
 
+app.post('/signout', (req, res) => {
+	res.cookie('__session', null, { maxAge: -1, httpOnly: true, secure: true });
+	res.end(JSON.stringify({ status: 'success' }));
+});
+
 app.get('/api/sponsors', (req, res) => {
 	db.collection('sponsors').get().then((snapshot) => {
-		var sponsors = [];
-		snapshot.docs.forEach((sponsorDoc) => {
-			let sponsorInfo = sponsorDoc.data();
-			sponsorInfo.level = levels[sponsorInfo.level];
-			sponsorInfo.mentors = [];
-			db.collection('mentors').where('company', '==', sponsorInfo.name).get().then((mentorSnapshot) => {
-				mentorSnapshot.docs.forEach((mentorDoc) => {
-					sponsorInfo.mentors.push(mentorDoc.data());
-				});
-				sponsors.push(sponsorInfo);
-				if (sponsors.length == snapshot.docs.length) {
-					res.json({ sponsors: sponsors });
-				}
-			});
+		var rawSponsors = snapshot.docs.map((sponsorDoc) => {
+			return sponsorDoc.data();
 		});
+		var sponsors = rawSponsors.reduce((result, item) => {
+			const key = levels[item.level];
+			if (!result[key]) result[key] = [];
+			result[key].push(item);
+			return result;
+		}, {});
+		res.json(sponsors);
 	});
 });
 
 app.get('/api/prizes', (req, res) => {
 	db.collection('prizes').orderBy('order').get().then((snapshot) => {
-		var prizes = [];
-		snapshot.docs.forEach((prizeDoc) => {
-			prizes.push({
-				sponsor: prizeDoc.get('sponsor'),
-				title: prizeDoc.get('title'),
-				reward: prizeDoc.get('reward'),
-				description: prizeDoc.get('description'),
-				prizetype: prizeDoc.get('prizetype')
-			});
+		var rawPrizes = snapshot.docs.map((prizeDoc) => {
+			var prizeData = prizeDoc.data();
+			prizeData.id = prizeDoc.id;
+			return prizeData;
 		});
-		res.json({ prizes: prizes });
+		var prizes = rawPrizes.reduce((result, item) => {
+			const key = item.prizeType;
+			if (!result[key]) result[key] = [];
+			result[key].push(item);
+			return result;
+		}, {});
+		res.json(prizes);
 	});
 });
 
 app.get('/api/schedule', (req, res) => {
 	db.collection('schedule').orderBy('time').get().then((snapshot) => {
-		var schedule = [];
-		snapshot.docs.forEach((scheduleDoc) => {
-			if (req.query.requiresCheckin && !scheduleDoc.get('canCheckIn')) {
-				return;
-			}
-			schedule.push({
-				time: scheduleDoc.get('time').toMillis(),
-				location: scheduleDoc.get('location'),
-				floor: scheduleDoc.get('floor'),
-				title: scheduleDoc.get('title'),
-				description: scheduleDoc.get('description'),
-				imageLocation: scheduleDoc.get('imageLocation'),
-				id: scheduleDoc.id,
-			});
+		var rawSchedule = snapshot.docs.map((scheduleDoc) => {
+			var scheduleData = scheduleDoc.data();
+			scheduleData.id = scheduleDoc.id;
+			return scheduleData;
 		});
+		var schedule = rawSchedule.reduce((result, item) => {
+			const key = item.time.toDate().toISOString();
+			if (!result[key]) result[key] = [];
+			item.time = item.time.toDate().toISOString();
+			item.canCheckIn = item.canCheckIn ? 'true' : 'false';
+			result[key].push(item);
+			return result;
+		}, {});
 		res.json(schedule);
 	});
 });
 
 app.get('/api/checkin', (req, res) => {
-	console.log(req.query);
 	db.collection('participants').doc(req.query.userid).get().then((userDoc) => {
 		if (!userDoc.exists) {
 			return res.status(404).json({
@@ -362,6 +362,20 @@ app.get('/api/checkin', (req, res) => {
 			checkins: admin.firestore.FieldValue.arrayUnion(req.query.event)
 		}, { merge: true });
 		res.json(userData);
+	});
+});
+
+app.get('/api/profile', (req, res) => {
+	db.collection('participants').doc(req.query.userid).get().then((userDoc) => {
+		QRCode.toDataURL(`https://tigerhacks.com/profile/${req.query.userid}`, qrOptions, (err, qrData) => {
+			db.collection('info').doc('admins').get().then((adminDoc) => {
+				res.json({
+					registered: userDoc.exists,
+					pass: qrData,
+					admin: adminDoc.get('users').includes(req.query.userid)
+				});
+			});
+		});
 	});
 });
 

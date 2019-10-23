@@ -2,14 +2,24 @@ doctype html
 html(lang='en')
   head
     title TigerHacks
-    link(rel='icon', href='/tiger_small.png')
-    meta(name='viewport', content='width=device-width, initial-scale=1')
-    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+    link(rel='icon' href='/tiger_small.png')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.8.2/css/all.css')
+    link(rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css')
+
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js')
     script(src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js')
     script(src='https://use.fontawesome.com/2dcf4e58a9.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js')
+
     link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
+
+    style.
+      table {
+        margin: auto;
+      }
   body(style='padding-top: 60px;')
     nav.navbar.navbar-expand-md.navbar-light.bg-light.fixed-top
       a.navbar-brand(href='#') TigerHacks Admin
@@ -17,16 +27,28 @@ html(lang='en')
         span.navbar-toggler-icon
       .collapse.navbar-collapse#navbarContent
         .nav.nav-pills(role='tablist')
-          a.nav-item.nav-link.active(data-toggle='pill' href='#participants' role='tab') Participants
+          a.nav-item.nav-link.active(data-toggle='pill' href='#overview' role='tab') Overview
+          a.nav-item.nav-link(data-toggle='pill' href='#participants' role='tab') Participants
           a.nav-item.nav-link.disabled(data-toggle='pill' href='#faq' role='tab') FAQ
           a.nav-item.nav-link.disabled(data-toggle='pill' href='#schedule' role='tab') Schedule
           a.nav-item.nav-link.disabled(data-toggle='pill' href='#prizes' role='tab') Prizes
           a.nav-item.nav-link.disabled(data-toggle='pill' href='#sponsors' role='tab') Sponsors
     .tab-content
-      #participants.tab-pane.fade.show.active(role='tabpanel')
-        table.table.table-striped.table-responsive
+      #overview.tab-pane.fade.show.active(role='tabpanel')
+        .container
+          h3= participants.length + ' people signed up'
+          .row
+            .canvas.col.col-12.col-md-4
+              canvas#gradYearChart
+            .canvas.col.col-12.col-md-4
+              canvas#shirtSizeChart
+            .canvas.col.col-12.col-md-4
+              canvas#dietaryChart
+      #participants.tab-pane.fade(role='tabpanel')
+        table.table.table-striped.table-responsive.table-sm
           thead
             tr
+              th(scole='col') #
               th(scope='col') Name
               th(scope='col') Email
               th(scope='col') School
@@ -38,8 +60,9 @@ html(lang='en')
               th(scope='col') Resume
               th(scope='col') Need reimbursement
           tbody
-            each participant in participants
+            each participant, index in participants
               tr
+                td= index + 1
                 td= participant.name
                 td= participant.email
                 td= participant.school
@@ -47,7 +70,8 @@ html(lang='en')
                 td= participant.graduation_year
                 td= participant.shirt_size
                 td= participant.dietary_restrictions.length == 0 ? 'None' : participant.dietary_restrictions
-                td= participant.notes
+                td
+                  a(role='button' data-toggle='popover' data-placement='bottom' data-container='body' data-content=participant.notes data-trigger='focus' tabindex='0') View
                 td
                   a(href=participant.resume target='_blank') Download
                 td= participant.reimbursement ? 'Yes' : 'No'
@@ -66,36 +90,6 @@ html(lang='en')
         h1 Prizes
       #sponsors.tab-pane.fade(role='tabpanel')
         h1 Sponsors
-    //- .container
-    //-   h1 TigerHacks Admin Panel
-    //-   .row
-    //-     .col.s12
-    //-       ul.tabs
-    //-         li.tab.col.s2
-    //-           a.active(href='#participants') Participants
-    //-         li.tab.col.s2
-    //-           a(href='#faq') FAQ
-    //-         li.tab.col.s2
-    //-           a(href='#schedule') Schedule
-    //-         li.tab.col.s2
-    //-           a(href='#prizes') Prizes
-    //-         li.tab.col.s2
-    //-           a(href='#sponsors') Sponsors
-    //-     #participants
-    //-     #schedule
-    //-       each day in Object.keys(schedule)
-    //-         h4= day
-    //-         .row
-    //-           each event in schedule[day]
-    //-             .col.s12.m4
-    //-               .card
-    //-                 .card-content
-    //-                   input#title(type='text' placeholder='Event name' value=event.title data-event=event.id)
-    //-                   input#location(type='text' placeholder='Location' value=event.location data-event=event.id)
-    //-                   input#time.timepicker(type='text' placeholder='Time' value=event.time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) data-event=event.id)
-    //-                   input#description(type='text' placeholder='Description' data-event=event.id value=event.description)
-    //-                 .card-action
-    //-                   p.save(data-event=event.id) Save
     script(type='text/javascript').
       $(document).ready(() => {
         $('.save').click((eventObj) => {
@@ -114,5 +108,44 @@ html(lang='en')
             time: time,
             description: description
           });
+        });
+        let participants =!{JSON.stringify(participants)};
+        let gradYears = [0,0,0,0,0,0,0];
+        participants.forEach((participant) => {
+          let year = parseInt(participant.graduation_year, 10) - 2018;
+          gradYears[year] += 1;
+        });
+        var gradYearCanvas = document.getElementById('gradYearChart').getContext('2d');
+        var gradYearChart = new Chart(gradYearCanvas, {
+          type: 'bar',
+          data: {
+            labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+            datasets: [{
+              data: gradYears,
+              label: 'Graduation Years'
+            }]
+          },
+          options: {
+            responsive: true
+          }
+        });
+        let shirtSizes = [0,0,0,0,0,0];
+        let sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+        participants.forEach((participant) => {
+          shirtSizes[sizes.indexOf(participant.shirt_size)] += 1;
+        });
+        var shirtSizeCanvas = document.getElementById('shirtSizeChart').getContext('2d');
+        var shirtSizeChart = new Chart(shirtSizeCanvas, {
+          type: 'bar',
+          data: {
+            labels: sizes,
+            datasets: [{
+              data: shirtSizes,
+              label: 'Shirt Sizes'
+            }]
+          },
+          options: {
+            responsive: true
+          }
         });
       });

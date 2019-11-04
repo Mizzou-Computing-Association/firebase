@@ -8,7 +8,7 @@
     ],
     "appAssociation": "AUTO",
     "rewrites": [{
-    	"source": "**",
+    	"source": "/**",
     	"function": "api"
     }]
   }

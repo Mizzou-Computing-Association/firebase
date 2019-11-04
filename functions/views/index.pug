@@ -103,7 +103,7 @@ html
                                   option(value='Gluten Free' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Gluten Free')) Gluten Free
                                   option(value='Allergy' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Allergy')) Allergy (please specify in notes)
                                   option(value='Other' selected= user.info.dietary_restrictions && user.info.dietary_restrictions.includes('Other')) Other (please specify in notes)
-                                label.form-text.text-muted Dietary restrictions
+                                label.form-text.text-muted Dietary restrictions (ctrl+click to deselect)
                               .form-group.col.col-12.col-md-6
                                 input.form-control.validate(name='notes' type='text' id='notes' value= user.info.notes ? user.info.notes : '')
                                 label.form-text.text-muted(for='notes') Notes

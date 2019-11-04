@@ -202,6 +202,27 @@ app.get('/admin', authenticate, (req, res) => {
 	});
 });
 
+app.get('/participants.csv', authenticate, (req, res) => {
+	if (!req.user) {
+		return res.redirect('/');
+	}
+	db.collection('info').doc('admins').get().then((adminDoc) => {
+		if (adminDoc.get('users').includes(req.user.user_id)) {
+			db.collection('participants').get().then((participantsSnapshot) => {
+				var csv = 'name,email,school,major,graduation year,shirt size,dietary restrictions,notes,resume,needs reimbursement\n';
+				participantsSnapshot.docs.forEach((participantDoc) => {
+					let user = participantDoc.data();
+					csv += `${user.name},${user.email},${user.school},${user.major},${user.graduation_year},${user.shirt_size},"${user.dietary_restrictions ? user.dietary_restrictions.join(',') : 'None'}","${user.notes}",${user.resume},${user.reimbursement}\n`;
+				});
+				res.setHeader('Content-Disposition', 'attachment; filename=participants.csv');
+				res.setHeader('Content-Type', 'text/csv');
+				res.charset = 'UTF-8';
+				res.send(csv);
+			});
+		}
+	});
+});
+
 app.get('/profile/:user', (req, res) => {
 	db.collection('participants').doc(req.params.user).get().then((userDoc) => {
 		res.send(pug.renderFile('./views/profile.pug', { title: `${userDoc.get('name')} | TigerHacks Profile`, user: userDoc.data() }))
@@ -212,6 +233,28 @@ app.post('/register', authenticate, (req, res) => {
 	if (!req.user) {
 		return res.redirect('/');
 	}
+
+	db.collection('participants').doc(req.user.user_id).get().then((snapshot) => {
+		if (snapshot.exists) {
+			return;
+		}
+		const nodemailer = require('nodemailer');
+		const transporter = nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: functions.config().email.email,
+				pass: functions.config().email.password
+			}
+		});
+		const email = {
+			from: functions.config().email.email,
+			to: snapshot.get('email'),
+			subject: 'Thank you for registering for TigerHacks!',
+			html: pug.renderFile('./views/email.pug')
+		}
+		transporter.sendMail(email, (err, info) => {});
+	});
+
 	const busboy = new Busboy({ headers: req.headers });
 
 	const fields = {
@@ -349,19 +392,32 @@ app.get('/api/schedule', (req, res) => {
 	});
 });
 
-app.get('/api/checkin', (req, res) => {
-	db.collection('participants').doc(req.query.userid).get().then((userDoc) => {
-		if (!userDoc.exists) {
-			return res.status(404).json({
-				error: 'User does not exist, please register!'
+app.get('/api/checkin', authenticate, (req, res) => {
+	if (!req.user) {
+		res.json({
+			error: 'You are not authenticated, only admins can check people in!'
+		});
+	}
+	db.collection('info').doc('admins').get().then((adminDoc) => {
+		if (adminDoc.get('users').includes(req.user.user_id)) {
+			db.collection('participants').doc(req.query.userid).get().then((userDoc) => {
+				if (!userDoc.exists) {
+					return res.json({
+						error: 'The user is not registered'
+					});
+				}
+				let userData = userDoc.data();
+				userData.alreadyin = userData.checkins.includes(req.query.event);
+				userDoc.ref.set({
+					checkins: admin.firestore.FieldValue.arrayUnion(req.query.event)
+				}, { merge: true });
+				res.json(userData);
+			});
+		} else {
+			res.json({
+				error: 'You are not an admin, please sign in with an authorized account and try again'
 			});
 		}
-		let userData = userDoc.data();
-		userData.alreadyin = userData.checkins.includes(req.query.event);
-		userDoc.ref.set({
-			checkins: admin.firestore.FieldValue.arrayUnion(req.query.event)
-		}, { merge: true });
-		res.json(userData);
 	});
 });
 

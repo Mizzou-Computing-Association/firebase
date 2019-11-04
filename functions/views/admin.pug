@@ -45,36 +45,38 @@ html(lang='en')
             .canvas.col.col-12.col-md-4
               canvas#dietaryChart
       #participants.tab-pane.fade(role='tabpanel')
-        table.table.table-striped.table-responsive.table-sm
-          thead
-            tr
-              th(scole='col') #
-              th(scope='col') Name
-              th(scope='col') Email
-              th(scope='col') School
-              th(scope='col') Major
-              th(scope='col') Graduation year
-              th(scope='col') Shirt Size
-              th(scope='col') Dietary restrictions
-              th(scope='col') Notes
-              th(scope='col') Resume
-              th(scope='col') Need reimbursement
-          tbody
-            each participant, index in participants
+        a.btn(href='participants.csv') Export
+        center
+          table.table.table-striped.table-responsive.table-sm
+            thead
               tr
-                td= index + 1
-                td= participant.name
-                td= participant.email
-                td= participant.school
-                td= participant.major
-                td= participant.graduation_year
-                td= participant.shirt_size
-                td= participant.dietary_restrictions.length == 0 ? 'None' : participant.dietary_restrictions
-                td
-                  a(role='button' data-toggle='popover' data-placement='bottom' data-container='body' data-content=participant.notes data-trigger='focus' tabindex='0') View
-                td
-                  a(href=participant.resume target='_blank') Download
-                td= participant.reimbursement ? 'Yes' : 'No'
+                th(scole='col') #
+                th(scope='col') Name
+                th(scope='col') Email
+                th(scope='col') School
+                th(scope='col') Major
+                th(scope='col') Graduation year
+                th(scope='col') Shirt Size
+                th(scope='col') Dietary restrictions
+                th(scope='col') Notes
+                th(scope='col') Resume
+                th(scope='col') Need reimbursement
+            tbody
+              each participant, index in participants
+                tr
+                  td= index + 1
+                  td= participant.name
+                  td= participant.email
+                  td= participant.school
+                  td= participant.major
+                  td= participant.graduation_year
+                  td= participant.shirt_size
+                  td= participant.dietary_restrictions.length == 0 ? 'None' : participant.dietary_restrictions
+                  td
+                    a(role='button' data-toggle='popover' data-placement='bottom' data-container='body' data-content=participant.notes data-trigger='focus' tabindex='0') View
+                  td
+                    a(href=participant.resume target='_blank') Download
+                  td= participant.reimbursement ? 'Yes' : 'No'
       #faq.tab-pane.fade(role='tabpanel')
         h1 Coming soon
       #schedule.tab-pane.fade(role='tabpanel')

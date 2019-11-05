@@ -55,7 +55,7 @@ html
                         if user.admin
                           a.btn.btn-lg(href='admin') Admin
                     .col.col-12.col-md-8
-                      h1= user.registered ? 'Update Info' : 'Register'
+                      h1= user.registered ? 'You are registered!' : 'Register'
                       form(action='/register' enctype='multipart/form-data' method='POST')
                         .row
                           .col.col-12

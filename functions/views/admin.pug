@@ -50,7 +50,8 @@ html(lang='en')
           table.table.table-striped.table-responsive.table-sm
             thead
               tr
-                th(scole='col') #
+                th(scope='col') #
+                th(scope='col') Checked in
                 th(scope='col') Name
                 th(scope='col') Email
                 th(scope='col') School
@@ -65,6 +66,7 @@ html(lang='en')
               each participant, index in participants
                 tr
                   td= index + 1
+                  td= participant.checkins.includes('Jzd2KTtHQd32nw2iy4Jt') ? 'Yes' : 'No'
                   td= participant.name
                   td= participant.email
                   td= participant.school

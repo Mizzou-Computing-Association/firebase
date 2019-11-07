@@ -130,7 +130,7 @@ app.get('/', authenticate, (req, res) => {
 
 app.get('/admin', authenticate, (req, res) => {
 	if (!req.user) {
-		res.redirect('/');
+		res.send(pug.renderFile('./views/admin.pug', { needsauth: true }));
 		return;
 	}
 	db.collection('info').doc('admins').get().then((adminDoc) => {
@@ -151,15 +151,8 @@ app.get('/admin', authenticate, (req, res) => {
 					return result;
 				}, {});
 				db.collection('schedule').orderBy('time').get().then((scheduleSnapshot) => {
-					var rawSchedule = scheduleSnapshot.docs.map((scheduleDoc) => {
-						var eventData = scheduleDoc.data();
-						eventData.id = scheduleDoc.id;
-						return eventData;
-					});
-					data.schedule = rawSchedule.reduce((result, item) => {
-						const key = item.time.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Chicago'});
-						if (!result[key]) result[key] = [];
-						result[key].push(item);
+					data.schedule = scheduleSnapshot.docs.reduce((result, item) => {
+						result[item.id] = item.data();
 						return result;
 					}, {});
 					db.collection('sponsors').orderBy('level').get().then((sponsorSnapshot) => {

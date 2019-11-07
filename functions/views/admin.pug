@@ -16,84 +16,109 @@ html(lang='en')
 
     link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
 
+    link(rel='stylesheet', href='https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css')
+    script(src='https://www.gstatic.com/firebasejs/6.5.0/firebase-app.js')
+    script(src='https://www.gstatic.com/firebasejs/6.5.0/firebase-auth.js')
+    script(src='https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js')
+
     style.
       table {
         margin: auto;
       }
   body(style='padding-top: 60px;')
-    nav.navbar.navbar-expand-md.navbar-light.bg-light.fixed-top
-      a.navbar-brand(href='#') TigerHacks Admin
-      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarContent')
-        span.navbar-toggler-icon
-      .collapse.navbar-collapse#navbarContent
-        .nav.nav-pills(role='tablist')
-          a.nav-item.nav-link.active(data-toggle='pill' href='#overview' role='tab') Overview
-          a.nav-item.nav-link(data-toggle='pill' href='#participants' role='tab') Participants
-          a.nav-item.nav-link.disabled(data-toggle='pill' href='#faq' role='tab') FAQ
-          a.nav-item.nav-link.disabled(data-toggle='pill' href='#schedule' role='tab') Schedule
-          a.nav-item.nav-link.disabled(data-toggle='pill' href='#prizes' role='tab') Prizes
-          a.nav-item.nav-link.disabled(data-toggle='pill' href='#sponsors' role='tab') Sponsors
-    .tab-content
-      #overview.tab-pane.fade.show.active(role='tabpanel')
-        .container
-          h3= participants.length + ' people signed up'
-          .row
-            .canvas.col.col-12.col-md-4
-              canvas#gradYearChart
-            .canvas.col.col-12.col-md-4
-              canvas#shirtSizeChart
-            .canvas.col.col-12.col-md-4
-              canvas#dietaryChart
-      #participants.tab-pane.fade(role='tabpanel')
-        a.btn(href='participants.csv') Export
-        center
-          table.table.table-striped.table-responsive.table-sm
-            thead
-              tr
-                th(scope='col') #
-                th(scope='col') Checked in
-                th(scope='col') Name
-                th(scope='col') Email
-                th(scope='col') School
-                th(scope='col') Major
-                th(scope='col') Graduation year
-                th(scope='col') Shirt Size
-                th(scope='col') Dietary restrictions
-                th(scope='col') Notes
-                th(scope='col') Resume
-                th(scope='col') Need reimbursement
-            tbody
-              each participant, index in participants
+    if needsauth
+      #auth-ui-container
+    else
+      nav.navbar.navbar-expand-md.navbar-light.bg-light.fixed-top
+        a.navbar-brand(href='#') TigerHacks Admin
+        button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarContent')
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse#navbarContent
+          .nav.nav-pills(role='tablist')
+            a.nav-item.nav-link.active(data-toggle='pill' href='#overview' role='tab') Overview
+            a.nav-item.nav-link(data-toggle='pill' href='#participants' role='tab') Participants
+            a.nav-item.nav-link(data-toggle='pill' href='#checkins' role='tab') Checkins
+            a.nav-item.nav-link.disabled(data-toggle='pill' href='#faq' role='tab') FAQ
+            a.nav-item.nav-link.disabled(data-toggle='pill' href='#schedule' role='tab') Schedule
+            a.nav-item.nav-link.disabled(data-toggle='pill' href='#prizes' role='tab') Prizes
+            a.nav-item.nav-link.disabled(data-toggle='pill' href='#sponsors' role='tab') Sponsors
+      .tab-content
+        #overview.tab-pane.fade.show.active(role='tabpanel')
+          .container
+            h3= participants.length + ' people signed up'
+            h3= participants.filter(p => p.checkins.length != 0).length + ' participants checked in'
+            .row
+              .canvas.col.col-12.col-md-4
+                canvas#gradYearChart
+              .canvas.col.col-12.col-md-4
+                canvas#shirtSizeChart
+              .canvas.col.col-12.col-md-4
+                canvas#dietaryChart
+        #participants.tab-pane.fade(role='tabpanel')
+          a.btn(href='participants.csv') Export
+          .table-responsive
+            table.table.table-striped.table-sm
+              thead
                 tr
-                  td= index + 1
-                  td= participant.checkins.includes('Jzd2KTtHQd32nw2iy4Jt') ? 'Yes' : 'No'
-                  td= participant.name
-                  td= participant.email
-                  td= participant.school
-                  td= participant.major
-                  td= participant.graduation_year
-                  td= participant.shirt_size
-                  td= participant.dietary_restrictions.length == 0 ? 'None' : participant.dietary_restrictions
-                  td
-                    a(role='button' data-toggle='popover' data-placement='bottom' data-container='body' data-content=participant.notes data-trigger='focus' tabindex='0') View
-                  td
-                    a(href=participant.resume target='_blank') Download
-                  td= participant.reimbursement ? 'Yes' : 'No'
-      #faq.tab-pane.fade(role='tabpanel')
-        h1 Coming soon
-      #schedule.tab-pane.fade(role='tabpanel')
-        each date in Object.keys(schedule)
-          h3= date
-          each event in schedule[date]
-            .card
-              .card-body
-                input.form-control(type='text' placeholder='Event name' value=event.title name='title')
-                input.form-control(type='text' placeholder='Location' value=event.location name='location')
-                input.form-control(type='time')
-      #prizes.tab-pane.fade(role='tabpanel')
-        h1 Prizes
-      #sponsors.tab-pane.fade(role='tabpanel')
-        h1 Sponsors
+                  th(scope='col') #
+                  th(scope='col') Checked in
+                  th(scope='col') Name
+                  th(scope='col') Email
+                  th(scope='col') School
+                  th(scope='col') Major
+                  th(scope='col') Graduation year
+                  th(scope='col') Shirt Size
+                  th(scope='col') Dietary restrictions
+                  th(scope='col') Notes
+                  th(scope='col') Resume
+                  th(scope='col') Need reimbursement
+              tbody
+                each participant, index in participants
+                  tr
+                    td= index + 1
+                    td= participant.checkins.length != 0 ? 'Yes' : 'No'
+                    td= participant.name
+                    td= participant.email
+                    td= participant.school
+                    td= participant.major
+                    td= participant.graduation_year
+                    td= participant.shirt_size
+                    td= participant.dietary_restrictions.length == 0 ? 'None' : participant.dietary_restrictions
+                    td
+                      a(role='button' data-toggle='popover' data-placement='bottom' data-container='body' data-content=participant.notes data-trigger='focus' tabindex='0') View
+                    td
+                      a(href=participant.resume target='_blank') Download
+                    td= participant.reimbursement ? 'Yes' : 'No'
+        #checkins.tab-pane.fade(role='tabpanel')
+          .table-responsive
+            table.table.table-striped.table-sm
+              thead
+                tr
+                  th(scope='col') Name
+                  th(scope='col') Events
+              tbody
+                each participant in participants
+                  if participant.checkins.length != 0
+                    tr
+                      td= participant.name
+                      td
+                        each eventId, index in participant.checkins
+                          span= schedule[eventId].title + ' ' + schedule[eventId].time.toDate().toLocaleTimeString('en-US', {timeZone: 'America/Chicago', hour: 'numeric', minute: 'numeric'}) + (index == participant.checkins.length - 1 && index != 0 ? '' : ', ')
+        #faq.tab-pane.fade(role='tabpanel')
+          h1 Coming soon
+        #schedule.tab-pane.fade(role='tabpanel')
+          each date in Object.keys(schedule)
+            h3= date
+            each event in schedule[date]
+              .card
+                .card-body
+                  input.form-control(type='text' placeholder='Event name' value=event.title name='title')
+                  input.form-control(type='text' placeholder='Location' value=event.location name='location')
+                  input.form-control(type='time')
+        #prizes.tab-pane.fade(role='tabpanel')
+          h1 Prizes
+        #sponsors.tab-pane.fade(role='tabpanel')
+          h1 Sponsors
     script(type='text/javascript').
       $(document).ready(() => {
         $('.save').click((eventObj) => {
@@ -150,6 +175,37 @@ html(lang='en')
           },
           options: {
             responsive: true
+          }
+        });
+        var firebaseConfig = {
+          apiKey: "AIzaSyCvg7KHlezxRSZgTqjAiY17b5PemBY6a1o",
+          authDomain: "tigerhacks.firebaseapp.com",
+          databaseURL: "https://tigerhacks.firebaseio.com",
+          projectId: "tigerhacks",
+          storageBucket: "tigerhacks.appspot.com",
+          messagingSenderId: "177120544304",
+          appId: "1:177120544304:web:d1aa2fe0625e567a"
+        };
+        firebase.initializeApp(firebaseConfig);
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
+        ui.start('#auth-ui-container', {
+          signInOptions: [
+            firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            firebase.auth.GithubAuthProvider.PROVIDER_ID,
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID
+          ],
+          signInFlow: 'popup',
+          credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+          callbacks: {
+            signInSuccessWithAuthResult: (authResult) => {
+              authResult.user.getIdToken().then(idToken => {
+                $.post('/setSession', {idToken: idToken})
+                  .done(() => {
+                    window.location.reload();
+                  });
+              });
+              return false;
+            }
           }
         });
       });
